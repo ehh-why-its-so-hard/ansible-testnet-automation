@@ -1,0 +1,8 @@
+- name: Prepare jenkins linux image
+  hosts: data-nodes
+  become: true
+  become_user: root
+  roles:
+    - vega-postgresql
+
+
