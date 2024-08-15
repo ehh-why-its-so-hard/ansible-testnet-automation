@@ -6,10 +6,12 @@
 # https://github.com/timescale/timescaledb/issues/1852
 - name: Timescaledb | Setup repository
   ansible.builtin.shell: curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | sudo bash
+  args:
+    creates: /etc/apt/sources.list.d/timescale_timescaledb.list
 
-# https://computingforgeeks.com/how-to-install-timescaledb-on-ubuntu/
-- name: Timescaledb | Setup repository - hack
-  shell: sed -i 's|kinetic|focal|g' /etc/apt/sources.list.d/timescale_timescaledb.list
+# # https://computingforgeeks.com/how-to-install-timescaledb-on-ubuntu/
+# - name: Timescaledb | Setup repository - hack
+#   shell: sed -i 's|kinetic|focal|g' /etc/apt/sources.list.d/timescale_timescaledb.list
 
 - name: Timescaledb | Install libssl1.1
   ansible.builtin.shell: |

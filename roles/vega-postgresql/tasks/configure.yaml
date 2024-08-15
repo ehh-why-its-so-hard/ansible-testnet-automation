@@ -1,4 +1,9 @@
----      
+---
+- name: Configure | Tune timescaledb
+  ansible.builtin.shell: timescaledb-tune --yes && touch /.timescaledb-tune-finished
+  args:
+    creates: /.timescaledb-tune-finished
+
 - name: Configure | Custom configuration changes to postgresql.conf
   ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{- vega_postgresql_version -}}/main/postgresql.conf"
@@ -27,11 +32,6 @@
   vars:
     external_postgresql_home: "{{- vega_postgresql_external_data_directory -}}/main"
     internal_postgresql_home: "/var/lib/postgresql/{{- vega_postgresql_version -}}/main"
-
-- name: Configure | Tune timescaledb
-  ansible.builtin.shell: timescaledb-tune --yes && touch /timescaledb-tune-finished
-  args:
-    creates: /.timescaledb-tune-finished
 
 - name: Configure | Check if data already migrated
   ansible.builtin.stat:
