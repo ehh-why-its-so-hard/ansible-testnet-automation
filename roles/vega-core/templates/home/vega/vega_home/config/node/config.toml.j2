@@ -1,0 +1,272 @@
+NodeMode = "{{ 'validator' if vega_core_validator_node else 'full' }}"
+MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
+
+[Admin]
+  Level = "Info"
+  [Admin.Server]
+    SocketPath = "/tmp/vega.sock"
+    HTTPPath = "/rpc"
+
+[API]
+  Level = "Info"
+  Timeout = "5s"
+  Port = 3002
+  IP = "0.0.0.0"
+  StreamRetries = 3
+  DisableTxCommit = true
+  [API.REST]
+    Port = 3003
+    IP = "0.0.0.0"
+    Enabled = true
+    APMEnabled = true
+    [API.REST.CORS]
+      AllowedOrigins = ["*"]
+      MaxAge = 7200
+
+[Blockchain]
+  Level = "Info"
+  LogTimeDebug = true
+  LogOrderSubmitDebug = true
+  LogOrderAmendDebug = false
+  LogOrderCancelDebug = false
+  ChainProvider = "tendermint"
+  [Blockchain.Tendermint]
+    Level = "Info"
+    RPCAddr = "tcp://127.0.0.1:26657"
+  [Blockchain.Null]
+    Level = "Info"
+    BlockDuration = "1s"
+    TransactionsPerBlock = 10
+    GenesisFile = ""
+    IP = "localhost"
+    Port = 3101
+    [Blockchain.Null.Replay]
+      Record = false
+      Replay = false
+      ReplayFile = ""
+
+[Collateral]
+  Level = "Info"
+
+[CoreAPI]
+  LogLevel = "Info"
+  Accounts = true
+  Assets = true
+  NetworkParameters = true
+  NetworkLimits = true
+  Parties = true
+  Validators = true
+  Proposals = true
+  Markets = true
+  Votes = true
+  MarketsData = true
+  PartiesStake = true
+  Delegations = true
+
+[Execution]
+  Level = "Info"
+  [Execution.Matching]
+    Level = "Info"
+    LogPriceLevelsDebug = false
+    LogRemovedOrdersDebug = false
+  [Execution.Risk]
+    Level = "Info"
+    StreamMarginLevelsVerbose = false
+  [Execution.Position]
+    Level = "Info"
+    StreamPositionVerbose = false
+  [Execution.Settlement]
+    Level = "Info"
+  [Execution.Fee]
+    Level = "Info"
+  [Execution.Liquidity]
+    Level = "Info"
+
+[Ethereum]
+  Level = "Info"
+  RPCEndpoint = "{{ vega_core_primary_evm_endpoint if vega_core_validator_node else '' }}"
+  RetryDelay = "15s"
+
+{% if vega_core_secondary_evm_endpoint | default("") != "" %}
+  [[Ethereum.EVMBridgeConfigs]]
+    RPCEndpoint = "{{- vega_core_secondary_evm_endpoint -}}"
+    ChainID = "{{- vega_core_secondary_evm_chain_id -}}"
+{% endif %}
+
+{% for evm_config in vega_core_evm_chain_configs %}
+  [[Ethereum.EVMChainConfigs]]
+    ChainID = "{{- evm_config.chain_id -}}"
+    RPCEndpoint = "{{- evm_config.endpoint -}}"
+{% endfor %}
+
+[Processor]
+  Level = "Info"
+  LogOrderSubmitDebug = true
+  LogOrderAmendDebug = false
+  LogOrderCancelDebug = false
+  KeepCheckpointsMax = 20
+  [Processor.Ratelimit]
+    Requests = 500
+    PerNBlocks = 10
+
+[Logging]
+  Environment = "dev"
+  [Logging.Custom]
+    [Logging.Custom.Zap]
+      Level = -1
+      Development = true
+      Encoding = "console"
+      OutputPaths = ["stdout"]
+      ErrorOutputPaths = ["stderr"]
+    [Logging.Custom.ZapEncoder]
+      CallerKey = "C"
+      EncodeCaller = "short"
+      EncodeDuration = "string"
+      EncodeLevel = "capital"
+      EncodeName = "full"
+      EncodeTime = "iso8601"
+      LevelKey = "L"
+      LineEnding = "\n"
+      MessageKey = "M"
+      NameKey = "N"
+      TimeKey = "T"
+
+[Oracles]
+  Level = "Info"
+
+[Time]
+  Level = "Info"
+
+[Epoch]
+  Level = "Info"
+
+[Metrics]
+  Level = "Info"
+  Timeout = "5s"
+  Port = 2112
+  Path = "/metrics"
+  Enabled = true
+
+[Governance]
+  Level = "Info"
+
+[NodeWallet]
+  Level = "Info"
+
+[Assets]
+  Level = "Info"
+
+[Notary]
+  Level = "Info"
+
+[EvtForward]
+  Level = "Debug"
+  RetryRate = "10s"
+  BlockchainQueueAllowlist = [
+{% if faucet_pubkey|default('') %}
+    # faucet
+    "{{ faucet_pubkey }}"
+{% endif %}
+  ]
+
+  [EvtForward.Ethereum]
+    Level = "Debug"
+    PollEventRetryDuration = "20s"
+    MaxEthereumBlocks = 10000
+    SkipClientVerification = true
+  [EvtForward.EthCall]
+    Level = "Debug"
+    PollEvery = "20s"
+        
+
+{% if vega_core_secondary_evm_endpoint | default("") != "" %}
+  [[EvtForward.EVMBridges]]
+    Level = "Info"
+    PollEventRetryDuration = "500ms"
+    MaxEthereumBlocks = 500
+    ChainID = "{{- vega_core_secondary_evm_chain_id -}}"
+    SkipClientVerification = true
+{% endif %}
+
+
+[Genesis]
+  Level = "Info"
+
+[Validators]
+  Level = "Info"
+
+[Banking]
+  Level = "Info"
+
+[Stats]
+  Level = "Info"
+
+[NetworkParameters]
+  Level = "Info"
+
+[Limits]
+  Level = "Info"
+
+[Checkpoint]
+  Level = "Info"
+
+[Staking]
+  Level = "Info"
+
+[Broker]
+  Level = "Info"
+  EventBusClientBufferSize = 100000
+  [Broker.Socket]
+    DialTimeout = "96h0m0s"
+    DialRetryInterval = "5s"
+    SocketQueueTimeout = "3s"
+    EventChannelBufferSize = 10000000
+    SocketChannelBufferSize = 1000000
+    MaxSendTimeouts = 10
+    Address = "127.0.0.1"
+    Port = 3005
+    Enabled = {{'true' if vega_core_with_data_node else 'false'}}
+    Transport = "tcp"
+  [Broker.File]
+    Enabled = false
+    File = ""
+
+[Rewards]
+  Level = "Info"
+
+[Delegation]
+  Level = "Info"
+
+[Spam]
+  Level = "Info"
+
+[PoW]
+  Level = "Info"
+
+[Snapshot]
+  Level = "Info"
+  KeepRecent = {{ vega_core_number_of_snapshots_to_keep | default('120') }}
+  RetryLimit = 5
+  Storage = "GOLevelDB"
+  StartHeight = 0
+
+[StateVar]
+  Level = "Info"
+
+[ERC20MultiSig]
+  Level = "Info"
+
+[ProtocolUpgrade]
+  Level = "Info"
+
+[Pprof]
+  Level = "Info"
+  Enabled = {{ 'true' if vega_core_pprof_enabled else 'false' }}
+  Port = 6060
+  ProfilesDir = "/home/vega/pprof/vega"
+  BlockProfileRate = 0
+  MutexProfileFraction = 0
+  WriteEvery = "15m0s"
+
+[Vesting]
+  Level = "Info"

@@ -1,0 +1,28 @@
+---
+- name: Install required software
+  ansible.builtin.apt:
+    pkg:
+      - tar
+      - gzip
+
+- name: Download geth binary
+  ansible.builtin.get_url:
+    url: "https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-{{- geth_version -}}.tar.gz"
+    dest: &geth_dest /tmp/geth.zip
+    mode: '0600'
+
+- name: Unpack geth
+  ansible.builtin.unarchive:
+    src: *geth_dest
+    remote_src: true
+    dest: /tmp
+    extra_opts: ['--strip-components=1', '--show-stored-names']
+
+- name: Copy geth binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/geth"
+    dest: /usr/local/bin/geth
+    owner: root
+    group: root
+    mode: '0755'

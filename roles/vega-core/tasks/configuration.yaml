@@ -1,0 +1,16 @@
+---
+- name: Tendermint config
+  ansible.builtin.template:
+    src: "home/vega/tendermint_home/config/config.toml.j2"
+    dest: "/home/vega/tendermint_home/config/config.toml"
+    owner: "vega"
+    group: "vega"
+    mode: "0664"
+
+- name: Core config
+  ansible.builtin.template:
+    src: "home/vega/vega_home/config/node/config.toml.j2"
+    dest: "/home/vega/vega_home/config/node/config.toml"
+    owner: "vega"
+    group: "vega"
+    mode: "0664"

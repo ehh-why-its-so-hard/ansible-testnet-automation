@@ -1,0 +1,7 @@
+
+
+
+- name: Install required software
+  ansible.builtin.apt:
+    pkg:
+      - unzip

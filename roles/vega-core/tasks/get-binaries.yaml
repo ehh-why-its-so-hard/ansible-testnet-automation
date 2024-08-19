@@ -1,0 +1,42 @@
+---
+- name: Download vega binary
+  ansible.builtin.get_url:
+    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_binary_version -}}/vega-linux-amd64.zip"
+    dest: &vega_dest /tmp/vega.zip
+    mode: '0600'
+
+- name: Unpack vega
+  ansible.builtin.unarchive:
+    src: *vega_dest
+    remote_src: true
+    dest: /tmp
+
+- name: Copy vega binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/vega"
+    dest: /usr/local/bin/vega
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Download visor binary
+  ansible.builtin.get_url:
+    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_binary_version -}}/visor-linux-amd64.zip"
+    dest: &visor_dest /tmp/visor.zip
+    mode: '0600'
+
+- name: Unpack visor
+  ansible.builtin.unarchive:
+    src: *visor_dest
+    remote_src: true
+    dest: /tmp
+
+- name: Copy visor binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/visor"
+    dest: /usr/local/bin/visor
+    owner: root
+    group: root
+    mode: '0755'
