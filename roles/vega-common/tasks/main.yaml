@@ -1,0 +1,34 @@
+- name: Install required software
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - wget
+      - curl
+      - vim
+      - gnupg
+      - gnupg2
+      - gnupg1
+      - acl
+      - unzip
+      - gzip
+
+- name: Ensure group "vega" exists
+  ansible.builtin.group:
+    name: vega
+    state: present
+
+- name: Ensure a 'vega' user exists
+  ansible.builtin.user:
+    name: vega
+    create_home: true
+    shell: /bin/bash
+    groups: sudo,vega
+    append: true
+
+- name: Update permissions for /home/vega
+  ansible.builtin.file:
+    path: /home/vega
+    state: directory
+    recurse: true
+    owner: vega
+    group: vega
