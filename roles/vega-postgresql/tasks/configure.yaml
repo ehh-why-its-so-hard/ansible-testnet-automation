@@ -1,8 +1,15 @@
 ---
 - name: Configure | Tune timescaledb
-  ansible.builtin.shell: timescaledb-tune --yes && touch /.timescaledb-tune-finished
+  ansible.builtin.shell: |
+    # https://github.com/timescale/timescaledb/issues/2991
+    mkdir -p /root/go/bin;
+    GOHOME=/root/go GOBIN=/root/go/bin go install github.com/timescale/timescaledb-tune/cmd/timescaledb-tune@main
+    mv /root/go/bin/timescaledb-tune /usr/local/bin/timescaledb-tune
+
+    /usr/local/bin/timescaledb-tune --yes && touch /.timescaledb-tune-finished
   args:
     creates: /.timescaledb-tune-finished
+
 
 - name: Configure | Custom configuration changes to postgresql.conf
   ansible.builtin.lineinfile:
@@ -10,6 +17,7 @@
     regexp: "^#?{{ item.key }} =.*"
     line: "{{ item.key }} = {{ item.value }}"
   with_dict:
+    - port: 5432
     - shared_preload_libraries: "'timescaledb'"
     - timescaledb.telemetry_level: "off"
     - restart_after_crash: "off"
@@ -32,6 +40,14 @@
   vars:
     external_postgresql_home: "{{- vega_postgresql_external_data_directory -}}/main"
     internal_postgresql_home: "/var/lib/postgresql/{{- vega_postgresql_version -}}/main"
+  register: psql_config
+
+- name: Enforce postgresql restart
+  ansible.builtin.service:
+    state: restarted
+    enabled: true
+    name: postgresql
+  when: psql_config.changed
 
 - name: Configure | Check if data already migrated
   ansible.builtin.stat:

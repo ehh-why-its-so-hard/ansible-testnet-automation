@@ -19,3 +19,25 @@
     priv: ALL
     state: present
   with_items: "{{ vega_postgresql_db_users }}"
+
+
+- name: Config PostgreSQL | Change database ownership
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_owner:
+    port: "5432"
+    db: "{{ item }}"
+    new_owner: "{{ item }}"
+    obj_name: "{{ item }}"
+    obj_type: database
+  with_items: "{{ vega_postgresql_db_users }}"
+
+- name: Config PostgreSQL | Grant SUPERUSER role to Data-Node db user
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    port: "5432"
+    name: "{{ item }}"
+    role_attr_flags: SUPERUSER
+    state: present
+  with_items: "{{ vega_postgresql_db_users }}"

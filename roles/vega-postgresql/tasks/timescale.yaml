@@ -22,12 +22,13 @@
   args:
     creates: /opt/libssl.deb
 
+
 - name: Timescaledb | Install
   ansible.builtin.apt:
     update_cache: true
     pkg:
-      - "timescaledb-2-oss-{{- vega_postgresql_timescaledb_version -}}-postgresql-{{ vega_postgresql_version }}"
-      - "timescaledb-2-loader-postgresql-{{ vega_postgresql_version }}"
+      - "timescaledb-2-{{- vega_postgresql_timescaledb_version -}}-postgresql-{{ vega_postgresql_version }}"
+      - "timescaledb-2-loader-postgresql-{{ vega_postgresql_version }}={{- vega_postgresql_timescaledb_version -}}*"
 
 - name: Start postgresql
   ansible.builtin.service:
