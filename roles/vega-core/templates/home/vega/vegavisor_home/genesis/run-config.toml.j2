@@ -1,0 +1,24 @@
+name = "genesis"
+
+[vega]
+  [vega.binary]
+    path = "vega"
+    args = [
+      "start",
+      "--home", "/home/vega/vega_home",
+      "--tendermint-home", "/home/vega/tendermint_home",
+      "--nodewallet-passphrase-file", "/home/vega/.passphrase.txt",
+    ]
+  [vega.rpc]
+    socketPath = "/tmp/vega.sock"
+    httpPath = "/rpc"
+
+{% if vega_core_with_data_node %}
+[data_node]
+  [data_node.binary]
+    path = "vega"
+    args = [
+      "datanode", "start",
+      "--home", "/home/vega/vega_home",
+    ]
+{% endif %}

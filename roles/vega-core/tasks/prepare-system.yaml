@@ -1,7 +1,21 @@
 
+- name: "Ensure permissions for {{ item -}}"
+  ansible.builtin.file:
+    path: "{{- item -}}"
+    state: directory
+    owner: vega
+    group: vega
+  with_items:
+    - /home/vega/vega_home
+    - /home/vega/tendermint_home
+    - /home/vega/network_history
 
 
-- name: Install required software
-  ansible.builtin.apt:
-    pkg:
-      - unzip
+- name: Install vegavisor systemd files
+  ansible.builtin.template:
+    src: "lib/systemd/system/vegavisor.service.j2"
+    dest: "/lib/systemd/system/vegavisor.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart postgresql"

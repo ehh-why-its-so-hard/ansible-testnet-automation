@@ -6,20 +6,30 @@
   become_user: vega
   become: true
 
-- name: Init core for non-validator node
-  ansible.builtin.shell: |
-    /usr/local/bin/vega init \
-      --home /home/vega/vega_home \
-      --tendermint-home /home/vega/tendermint_home \
-      --output json \
-    full
-  args:
-    executable: /bin/bash
-    creates: /home/vega/vega_home
+- name: Init config for non-validator node
+  when: not vega_core_validator_node
   become_user: vega
   become: true
-  when: not vega_core_validator_node
+  block:
+  - name: Init core
+    ansible.builtin.shell: |
+      /usr/local/bin/vega init \
+        --home /home/vega/vega_home \
+        --tendermint-home /home/vega/tendermint_home \
+        --output json \
+      full
+    args:
+      executable: /bin/bash
+      creates: /home/vega/vega_home/config/node/config.toml
 
+  - name: Init data-node
+    ansible.builtin.shell: |
+      /usr/local/bin/vega datanode init \
+        --home /home/vega/vega_home \
+      "{{- vega_core_chain_id -}}"
+    args:
+      executable: /bin/bash
+      creates: /home/vega/vega_home/config/data-node/config.toml
 
 - name: Init core for validator node group
   become_user: vega

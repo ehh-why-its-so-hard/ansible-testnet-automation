@@ -1,3 +1,6 @@
+vega_core_run_network: false
+
+vega_core_chain_id: "stagnet1-20240816"
 vega_core_external_endpoint: ""
 # vega version used only once for genesis version in the vegavisor and for the maintenance stuff (/usr/local/bin/vega)
 vega_core_binary_version: v0.77.6
