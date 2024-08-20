@@ -35,6 +35,7 @@
 - name: Create dataset
   when: vega_zfs_device != ""
   ansible.builtin.shell: |
+    mkdir -p "{{- item.mount_point -}}";
     zfs create "{{- item.dataset_name -}}";
     zfs set atime=off "{{- item.dataset_name -}}";
     zfs set compression=zstd "{{- item.dataset_name -}}";
@@ -43,8 +44,10 @@
     # reduce amount of metadata (may improve random writes);
     zfs set redundant_metadata=most "{{- item.dataset_name -}}";
     zfs set mountpoint="{{- item.mount_point -}}" "{{- item.dataset_name -}}";
+
+    touch "{{- item.mount_point -}}/.zfs_pool"
   args:
-    creates: "{{- item.mount_point -}}"
+    creates: "{{- item.mount_point -}}/.zfs_pool"
   with_items:
     - dataset_name: "{{- vega_zfs_pool_name -}}/home"
       mount_point: "{{- vega_zfs_mount_point -}}"
@@ -54,3 +57,5 @@
       mount_point: "{{- vega_zfs_mount_point -}}/tendermint_home"
     - dataset_name: "{{- vega_zfs_pool_name -}}/home/network_history"
       mount_point: "{{- vega_zfs_mount_point -}}/network_history"
+    - dataset_name: "{{- vega_zfs_pool_name -}}/home/postgresql"
+      mount_point: "{{- vega_zfs_mount_point -}}/postgresql"

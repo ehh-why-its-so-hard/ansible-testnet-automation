@@ -29,6 +29,5 @@
   ansible.builtin.file:
     path: /home/vega
     state: directory
-    recurse: true
     owner: vega
     group: vega
