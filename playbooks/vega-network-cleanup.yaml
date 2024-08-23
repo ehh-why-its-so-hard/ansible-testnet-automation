@@ -1,5 +1,8 @@
 ---
-- name: Prepare jenkins linux image
+- name: Cleanup the network. 
+  # !!!IMPORTANT!!! 
+  #    It will remove all the keys, make sure you have backup before you run it.
+  #    It deletes all the network data and cannot be retrieved
   hosts: put_here_the_network_name
   become: true
   become_user: root
