@@ -6,6 +6,16 @@
   become_user: vega
   become: true
 
+- name: Initialize block-explorer
+  when: vega_core_with_block_explorer
+  become_user: vega
+  become: true
+  ansible.builtin.shell: |
+    /usr/local/bin/vega blockexplorer init \
+    --home /home/vega/vega_home;
+  args:
+    creates: /home/vega/vega_home/config/blockexplorer
+
 - name: Init config for non-validator node
   when: not vega_core_validator_node
   become_user: vega

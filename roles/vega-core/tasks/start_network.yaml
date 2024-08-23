@@ -6,4 +6,6 @@
     owner: vega
     group: vega
     mode: '0644'
-  notify: "Restart vegavisor"
+  notify:
+    - "Restart vegavisor"
+    - "Restart block-explorer"

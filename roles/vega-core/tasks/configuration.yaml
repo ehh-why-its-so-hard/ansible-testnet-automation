@@ -19,7 +19,7 @@
       dest: /home/vega/vega_home/config/node/config.toml.orig
   when: not config_backup.stat.exists
 
-- name: "Backup original configuration for data-node"
+- name: Backup original configuration for data-node
   ansible.builtin.copy:
     remote_src: true
     src: /home/vega/vega_home/config/data-node/config.toml
@@ -29,6 +29,15 @@
     mode: '0755'
   when: not config_backup.stat.exists and vega_core_with_data_node
 
+- name: Backup original configuration for block-explorer
+  ansible.builtin.copy:
+    remote_src: true
+    src: /home/vega/vega_home/config/blockexplorer/config.toml
+    dest: /home/vega/vega_home/config/blockexplorer/config.toml.orig
+    owner: vega
+    group: vega
+    mode: '0755'
+  when: not config_backup.stat.exists and vega_core_with_block_explorer
 
 - name: Tendermint config
   ansible.builtin.template:
@@ -56,7 +65,7 @@
 
 - name: Check that genesis was already prepared
   ansible.builtin.stat:
-    path: /home/vega/vegavisor_home/genesis/vega1
+    path: /home/vega/vegavisor_home/genesis/vega
   register: genesis_visor_prepared
 
 - name: Prepare initial version vegavisor home
@@ -140,3 +149,12 @@
   with_items:
     - ".NetworkHistory.Store.PeerID"
     - ".NetworkHistory.Store.PrivKey"
+
+- name: Block-explorer config
+  ansible.builtin.template:
+    src: "home/vega/vega_home/config/blockexplorer/config.toml.j2"
+    dest: "/home/vega/vega_home/config/blockexplorer/config.toml"
+    owner: "vega"
+    group: "vega"
+    mode: "0664"
+  when: vega_core_with_block_explorer

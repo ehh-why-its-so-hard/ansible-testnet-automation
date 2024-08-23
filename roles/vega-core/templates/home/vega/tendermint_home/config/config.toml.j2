@@ -453,11 +453,16 @@ discard_abci_responses = true
 #               - When "kv" is chosen "tx.height" and "tx.hash" will always be indexed.
 #   3) "psql" - the indexer services backed by PostgreSQL.
 # When "kv" or "psql" is chosen "tx.height" and "tx.hash" will always be indexed.
-indexer = "kv"
+indexer = "{{'psql' if vega_core_with_block_explorer else 'kv'}}" # TODO(think about it): maybe null?
 
 # The PostgreSQL connection configuration, the connection format:
 #   postgresql://<user>:<password>@<host>:<port>/<db>?<opts>
+{% if vega_core_with_block_explorer %}
+psql-conn = "postgresql://tendermint:tendermitn@127.0.0.1:5432/tendermint?sslmode=disable"
+{% else %}
 psql-conn = ""
+{% endif %}
+
 # Comma-separated list of compositeKeys to index (by default the only key is "tx.hash")
 # Remember that Event has the following structure: type.key
 # type: [

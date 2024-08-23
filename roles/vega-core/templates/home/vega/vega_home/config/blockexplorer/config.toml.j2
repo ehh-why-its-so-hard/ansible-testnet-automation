@@ -1,0 +1,49 @@
+[API]
+  ListenAddress = "0.0.0.0"
+  ListenPort = 1515
+  [API.GRPC]
+    Reflection = true
+    Level = "Info"
+    MaxPageSizeDefault = 50
+  [API.GRPCUI]
+    Enabled = true
+    Endpoint = "/grpc"
+    Level = "Info"
+    MaxPayloadSize = 4194304
+  [API.REST]
+    Level = "Info"
+    Enabled = true
+    Endpoint = "/rest"
+  [API.Gateway]
+
+[Store]
+  MigrateData = false
+  [Store.Postgres]
+    Host = "127.0.0.1"
+    Port = 5432
+    Username = "tendermint"
+    Password = "tendermint"
+    Database = "tendermint"
+    ApplicationName = "vega block explorer"
+
+[Logging]
+  Environment = "dev"
+  [Logging.Custom]
+    [Logging.Custom.Zap]
+      Level = -1
+      Development = true
+      Encoding = "console"
+      OutputPaths = ["stdout"]
+      ErrorOutputPaths = ["stderr"]
+    [Logging.Custom.ZapEncoder]
+      CallerKey = "C"
+      EncodeCaller = "short"
+      EncodeDuration = "string"
+      EncodeLevel = "capital"
+      EncodeName = "full"
+      EncodeTime = "iso8601"
+      LevelKey = "L"
+      LineEnding = "\n"
+      MessageKey = "M"
+      NameKey = "N"
+      TimeKey = "T"
