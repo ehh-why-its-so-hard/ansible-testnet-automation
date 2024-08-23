@@ -1,0 +1,9 @@
+# this step will run only once after the flag `vega_core_run_network` is flipped. Next restarts must be done manually
+- name: Create passphrase file
+  ansible.builtin.copy:
+    dest: "/home/vega/.restart_flag"
+    content: "{{- vega_core_run_network -}}"
+    owner: vega
+    group: vega
+    mode: '0644'
+  notify: "Restart vegavisor"

@@ -1,0 +1,7 @@
+---
+- name: Prepare jenkins linux image
+  hosts: put_here_the_network_name
+  become: true
+  become_user: root
+  roles:
+    - role: vega-cleanup

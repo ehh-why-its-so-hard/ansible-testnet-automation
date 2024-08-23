@@ -1,0 +1,10 @@
+---
+- name: Bootstrap-vega-network
+  hosts: put_network_here
+  become: true
+  become_user: root
+  roles:
+    - role: vega-postgresql
+      when: vega_core_with_data_node or vega_core_with_block_explorer
+    - role: vega-zfs
+    - role: vega-core

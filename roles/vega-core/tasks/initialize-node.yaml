@@ -13,6 +13,8 @@
   block:
   - name: Init core
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega init \
         --home /home/vega/vega_home \
         --tendermint-home /home/vega/tendermint_home \
@@ -24,12 +26,14 @@
 
   - name: Init data-node
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega datanode init \
         --home /home/vega/vega_home \
       "{{- vega_core_chain_id -}}"
     args:
       executable: /bin/bash
-      creates: /home/vega/vega_home/config/data-node/config.toml
+      creates: /home/vega/vega_home/config/data-node
 
 - name: Init core for validator node group
   become_user: vega
@@ -46,6 +50,8 @@
 
   - name: Init core for validator node
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega init \
         --home /home/vega/vega_home \
         --tendermint-home /home/vega/tendermint_home \
@@ -58,18 +64,23 @@
 
   - name: Create vega wallet
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega wallet create \
         --home /home/vega/vega_home \
         --output json \
         --passphrase-file /home/vega/.passphrase.txt \
         --wallet validator \
       | tee /home/vega/vega_home/.wallet-create.log
+    register: create_vega_wallet
     args:
       executable: /bin/bash
       creates: /home/vega/vega_home/data/wallets/validator
 
   - name: Import vega wallet
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega nodewallet import \
         --home /home/vega/vega_home \
         --output json \
@@ -84,6 +95,8 @@
 
   - name: Import tendermint wallet
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega nodewallet import \
         --home=/home/vega/vega_home \
         --output json \
@@ -108,11 +121,13 @@
       owner: vega
       group: vega
       mode: '0600'
-    when: not private_key_file.stat.exists # do not create this file if exists even if content changed
+    when: not private_key_file.stat.exists or create_vega_wallet.changed # do not create this file if exists even if content changed
 
   # Geth must be installed in the geth role used as deps for this role
   - name: Import ethereum account into keystore
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/geth account import \
         --keystore /home/vega/vega_home/data/wallets/ \
         --password /home/vega/.passphrase.txt \
@@ -126,6 +141,8 @@
 
   - name: Import ethereum keystore into the node-wallet
     ansible.builtin.shell: |
+      set -o pipefail
+
       /usr/local/bin/vega nodewallet import \
         --home /home/vega/vega_home \
         --output json \
@@ -140,6 +157,8 @@
 
   - name: Save validator details in the /home/vega/vega_home/validator_details.txt
     ansible.builtin.shell: |
+      set -o pipefail
+
       vega genesis new validator \
         --country "{{- vega_core_validator_country -}}" \
         --info-url "{{- vega_core_validator_info_url -}}" \
@@ -150,4 +169,5 @@
         --passphrase-file /home/vega/.passphrase.txt \
       | tee /home/vega/vega_home/validator_details.txt
     args:
+      executable: /bin/bash
       creates: /home/vega/vega_home/validator_details.txt

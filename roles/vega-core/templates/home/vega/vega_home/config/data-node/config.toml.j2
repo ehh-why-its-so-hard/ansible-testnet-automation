@@ -6,7 +6,7 @@ MaxMemoryPercent = 33
 [Admin]
   Level = "Info"
   [Admin.Server]
-    SocketPath = "/home/vega/run/datanode.sock"
+    SocketPath = "/tmp/datanode.sock"
     HTTPPath = "/datanode/rpc"
 
 [API]
@@ -178,7 +178,10 @@ MaxMemoryPercent = 33
   [NetworkHistory.Store]
     PeerID = "XXXXXXXXXXXXXXXXXXXXX"
     PrivKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    BootstrapPeers = ["XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"]
+    BootstrapPeers = [{%- for peer in vega_core_data_node_bootstrap_peers -%}
+"{{- peer -}}"
+{%- if not loop.last %},{% endif -%}
+{%- endfor -%}]
     SwarmPort = 4001
     SwarmKeyOverride = ""
     HistoryRetentionBlockSpan = 604800

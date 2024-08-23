@@ -7,7 +7,6 @@
       - vim
       - gnupg
       - gnupg2
-      - gnupg1
       - acl
       - unzip
       - gzip
@@ -31,3 +30,10 @@
     state: directory
     owner: vega
     group: vega
+
+- name: Install golang
+  ansible.builtin.import_tasks: golang.yaml
+
+- name: Install dasel
+  ansible.builtin.import_tasks: dasel.yaml
+

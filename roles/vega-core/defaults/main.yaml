@@ -1,10 +1,11 @@
 vega_core_run_network: false
 
-vega_core_chain_id: "stagnet1-20240816"
+vega_core_chain_id: ""
 vega_core_external_endpoint: ""
 # vega version used only once for genesis version in the vegavisor and for the maintenance stuff (/usr/local/bin/vega)
 vega_core_binary_version: v0.77.6
 vega_core_with_data_node: false
+vega_core_with_block_explorer: false
 vega_core_validator_node: false
 vega_core_number_of_snapshots_to_keep: 240
 vega_core_pprof_enabled: false
@@ -33,4 +34,6 @@ vega_core_evm_chain_configs:
     endpoint: ""
   - chain_id: 1
     endpoint: ""
+
+vega_core_data_node_bootstrap_peers: []
 

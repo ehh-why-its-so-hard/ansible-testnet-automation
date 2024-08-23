@@ -6,6 +6,7 @@
     owner: vega
     group: vega
   with_items:
+    - /home/vega
     - /home/vega/vega_home
     - /home/vega/tendermint_home
     - /home/vega/network_history

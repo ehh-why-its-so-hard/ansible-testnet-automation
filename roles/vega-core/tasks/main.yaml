@@ -11,3 +11,5 @@
 - name: Prepare node configuration
   ansible.builtin.import_tasks: configuration.yaml
 
+- name: Start network
+  ansible.builtin.import_tasks: start_network.yaml
