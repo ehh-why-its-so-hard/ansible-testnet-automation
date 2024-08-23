@@ -42,24 +42,30 @@
     internal_postgresql_home: "/var/lib/postgresql/{{- vega_postgresql_version -}}/main"
   register: psql_config
 
+- name: Configure | Check if data already migrated
+  ansible.builtin.stat:
+    path: '/.vega_postgresql_data_directory_migrated'
+  register: directory_data_migrated
+
+- name: Configure | Migrate previous home
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    cp -r "/var/lib/postgresql/{{- vega_postgresql_version -}}/main" "{{- vega_postgresql_external_data_directory -}}/main";
+    chown -R postgres:postgres "{{- vega_postgresql_external_data_directory -}}";
+    find "{{- vega_postgresql_external_data_directory -}}" -type d ! -perm 0750 -exec chmod 0750 {} \;
+    find "{{- vega_postgresql_external_data_directory -}}" -type f ! -perm 0640 -exec chmod 0640 {} \;
+    touch "/.vega_postgresql_data_directory_migrated";
+  args:
+    creates: "/.vega_postgresql_data_directory_migrated"
+    executable: /bin/bash
+  register: migrate_psql_home
+  notify: "Restart postgresql"
+  when: vega_postgresql_external_data_directory != '' and not directory_data_migrated.stat.exists
+
 - name: Enforce postgresql restart
   ansible.builtin.service:
     state: restarted
     enabled: true
     name: postgresql
-  when: psql_config.changed
-
-- name: Configure | Check if data already migrated
-  ansible.builtin.stat:
-    path: './postgresql_data_dir_migrated'
-  register: directory_data_migrated
-
-- name: Configure | Migrate previous home
-  ansible.builtin.shell: |
-    cp -r "/var/lib/postgresql/{{- vega_postgresql_version -}}/main" "{{- vega_postgresql_external_data_directory -}}/";
-    chown -R postgres:postgres "{{- vega_postgresql_external_data_directory -}}/main";
-    touch "/.postgresql_data_dir_migrated";
-  args:
-    creates: "/.postgresql_data_dir_migrated"
-  notify: "Restart postgresql"
-  when: vega_postgresql_external_data_directory != '' and not directory_data_migrated.stat.exists
+  when: psql_config.changed or migrate_psql_home.changed
