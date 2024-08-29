@@ -1,0 +1,15 @@
+---
+- name: Prepare system
+  ansible.builtin.import_tasks: prepare-system.yaml
+
+- name: Get binaries
+  ansible.builtin.import_tasks: get-binaries.yaml
+
+- name: Get initialize
+  ansible.builtin.import_tasks: initialize-node.yaml
+
+- name: Prepare node configuration
+  ansible.builtin.import_tasks: configuration.yaml
+
+- name: Start network
+  ansible.builtin.import_tasks: start_network.yaml

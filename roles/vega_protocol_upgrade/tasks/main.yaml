@@ -1,0 +1,30 @@
+---
+- name: Fail when upgrade version is not given
+  ansible.builtin.fail:
+    msg: Pass non-empty value to the `vega_protocol_upgrade_version` variable
+  when: vega_protocol_upgrade_version | length < 1
+
+- name: Fail when upgrade height is not given
+  ansible.builtin.fail:
+    msg: Pass non-empty value to the `vega_protocol_upgrade_height` variable
+  when: vega_protocol_upgrade_height | int < 100
+
+- name: Check if passphrase exist
+  ansible.builtin.stat:
+    path: /home/vega/.passphrase.txt
+  register: passphrase_file
+
+- name: Propose protocol upgrade
+  when: passphrase_file.stat.exists
+  ansible.builtin.shell:
+    /home/vega/vegavisor_home/current/vega protocol_upgrade_proposal \
+      --home /home/vega/vega_home \
+      --output=json \
+      --height "{{- vega_protocol_upgrade_height -}}" \
+      --vega-release-tag "{{- vega_protocol_upgrade_version -}}" \
+      --passphrase-file /home/vega/.passphrase.txt
+  args:
+    executable: /bin/bash
+  register: protocol_upgrade
+  changed_when: "'txHash' in protocol_upgrade.stdout"
+  failed_when: "not 'txHash' in protocol_upgrade.stdout"

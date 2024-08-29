@@ -1,0 +1,58 @@
+---
+- name: Check local services
+  ansible.builtin.service_facts:
+  # populates `services` variable with data at this point in time
+
+- name: Stop vegavisor
+  ansible.builtin.service:
+    state: stopped
+    daemon_reload: true
+    name: vegavisor
+  when: "'vegavisor.service' in services"
+
+- name: Get all files in vega_home
+  ansible.builtin.find:
+    path: "{{ vega_cleanup_network_home }}/vega_home"
+    file_type: any
+    hidden: true
+  register: directory_content_result
+
+- name: Remove the vega_home directory content
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ directory_content_result.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Get all files in tendermint_home
+  ansible.builtin.find:
+    path: "{{ vega_cleanup_network_home }}/tendermint_home"
+    file_type: any
+    hidden: true
+  register: directory_content_result
+
+- name: Remove the tendermint_home directory content
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ directory_content_result.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Remove the vegavisor_home directory
+  ansible.builtin.file:
+    path: "{{ vega_cleanup_network_home }}/vegavisor_home"
+    state: absent
+
+- name: Remove vega-related databases
+  when: "'postgresql.service' in services"
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ item }}"
+    port: "5432"
+    state: absent
+  with_items:
+    - vega
+    - tendermint

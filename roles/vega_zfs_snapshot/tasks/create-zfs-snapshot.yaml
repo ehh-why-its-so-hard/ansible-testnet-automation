@@ -1,0 +1,118 @@
+---
+- name: Fail when snapshot name is empty
+  ansible.builtin.fail:
+    msg: Pass non-empty value to the `vega_zfs_snapshot_create_snapshot_name` variable
+  when: vega_zfs_snapshot_create_snapshot_name | length < 1
+
+- name: Stop service if needed
+  when:
+    - vega_zfs_snapshot_create_stop_services
+  block:
+    - name: Check local services
+      ansible.builtin.service_facts:
+      # populates `services` variable with data at this point in time
+
+    # Stop vegavisor
+    - name: Stop vegavisor service if needed
+      when:
+        - "'vegavisor.service' in services" # don't stop if the service does not exist
+      block:
+        - name: Stop vegavisor service
+          ansible.builtin.systemd:
+            name: vegavisor
+            state: stopped
+
+        - name: Sleep after stopping vegavisor
+          ansible.builtin.wait_for:
+            timeout: 10 # seconds
+
+    # Stop vegavisor
+    - name: Stop block-explorer service if needed
+      when:
+        - "'blockexplorer.service' in services" # don't stop if the service does not exist
+      block:
+        - name: Stop block-explorer service
+          ansible.builtin.systemd:
+            name: blockexplorer
+            state: stopped
+
+    # Stop PostgreSQL
+    - name: Stop PostgreSQL service if needed
+      when:
+        - "'postgresql' in services" # don't stop if the service does not exist
+      block:
+        - name: Stop PostgreSQL Service
+          ansible.builtin.systemd:
+            name: postgresql
+            state: stopped
+
+        - name: Sleep for 15 seconds after stopping PostgreSQL
+          ansible.builtin.wait_for:
+            timeout: 15 # seconds
+
+#
+# Create ZFS snapshot
+#
+- name: Create local ZFS snapshot
+  become: true
+  register: create_snapshot
+  args:
+    executable: /bin/bash
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    zfs list -t snapshot | grep "{{- vega_zfs_snapshot_create_snapshot_name -}}" && return 1
+    zfs snapshot -r vega_pool@"{{- vega_zfs_snapshot_create_snapshot_name -}}"
+  changed_when: create_snapshot.rc | int == 0
+
+#
+# Start services
+#
+
+- name: Start service if needed
+  when:
+    - vega_zfs_snapshot_create_stop_services|default(false)
+  block:
+
+    # Start PostgreSQL
+    - name: Start PostgreSQL service if needed
+      when:
+        - "'postgresql' in services" # don't start if the service does not exist
+        - services['postgresql']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+      block:
+        - name: ZFS create local snapshot | Start PostgreSQL Service
+          ansible.builtin.systemd:
+            name: postgresql
+            state: started
+
+        - name: ZFS create local snapshot | Wait for PostgreSQL to start listening
+          ansible.builtin.wait_for:
+            host: "127.0.0.1"
+            port: "5432"
+            timeout: 30 # seconds
+
+    # Start vegavisor
+    - name: Start vegavisor service if needed
+      when:
+        - "'vegavisor.service' in services" # don't start if the service does not exist
+        - services['vegavisor.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+      block:
+        - name: ZFS create local snapshot | Start vegavisor Service
+          ansible.builtin.systemd:
+            name: vegavisor
+            state: started
+
+        - name: ZFS create local snapshot | Wait for core up
+          ansible.builtin.wait_for:
+            port: "3002"
+            timeout: 300 # seconds
+
+    - name: Start block-explorer service if needed
+      when:
+        - "'blockexplorer.service' in services" # don't start if the service does not exist
+        - services['blockexplorer.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+      block:
+        - name: Start block-explorer Service
+          ansible.builtin.systemd:
+            name: blockexplorer
+            state: started

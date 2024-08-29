@@ -1,0 +1,13 @@
+---
+- name: Take snapshot of all the servers
+  hosts: stagnet1
+  become: true
+  become_user: root
+  roles:
+    - role: vega_zfs_snapshot
+      vars:
+        vega_zfs_snapshot_rollback: true
+
+# Example:
+# ansible-playbook playbooks/vega-network-zfs-rollback.yaml \
+#   --extra-vars "vega_zfs_snapshot_rollback_snapshot_name=manual-snapshot1"

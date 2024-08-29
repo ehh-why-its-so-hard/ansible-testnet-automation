@@ -1,0 +1,19 @@
+[Unit]
+Description=blockexplorer
+Documentation=https://github.com/vegaprotocol/vega
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+User=vega
+Group=vega
+ExecStart="/home/vega/vegavisor_home/current/vega" blockexplorer start --home "/home/vega/vega_home"
+TimeoutStopSec=10s
+LimitNOFILE=1048576
+LimitNPROC=512
+PrivateTmp=false
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
