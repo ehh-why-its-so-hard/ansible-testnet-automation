@@ -1,0 +1,12 @@
+---
+- name: Take snapshot of all the servers
+  hosts: all
+  become: true
+  become_user: root
+  roles:
+    - role: vega_protocol_upgrade
+
+# Example:
+#  ansible-playbook playbooks/vega-network-protocol-upgrade.yaml \
+#   --limit network_name \
+#   --extra-vars "vega_protocol_upgrade_version=v0.78.0-preview.4 vega_protocol_upgrade_height=294288"

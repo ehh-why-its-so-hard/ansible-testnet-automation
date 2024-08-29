@@ -1,4 +1,6 @@
 ---
-data-nodes:
-  hosts:
-    vega-n00.local.mainnet.community:
+local:
+  127.0.0.1:
+    # add some variables here
+  vars:
+    # add some additional vars

@@ -1,7 +1,0 @@
-vega_zfs_snapshot_create: false
-vega_zfs_snapshot_create_stop_services: true
-vega_zfs_snapshot_create_snapshot_name: ""
-
-vega_zfs_snapshot_rollback: false
-vega_zfs_snapshot_rollback_start_services: true
-vega_zfs_snapshot_rollback_snapshot_name: ""

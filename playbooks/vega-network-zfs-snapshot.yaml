@@ -4,8 +4,10 @@
   become: true
   become_user: root
   roles:
-    - role: vega-zfs-snapshot
+    - role: vega_zfs_snapshot
       vars:
         vega_zfs_snapshot_rollback: true
 
-# Example: ansible-playbook vega-network-zfs-snapshot.yaml --extra-vars "vega_zfs_snapshot_create_snapshot_name=manual-snapshot1"
+# Example:
+# ansible-playbook playbooks/vega-network-zfs-snapshot.yaml \
+#   --extra-vars "vega_zfs_snapshot_create_snapshot_name=manual-snapshot1"

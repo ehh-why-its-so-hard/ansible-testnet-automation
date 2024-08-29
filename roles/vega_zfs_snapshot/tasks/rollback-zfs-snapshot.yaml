@@ -1,0 +1,103 @@
+- name: Fail when snapshot name is empty
+  ansible.builtin.fail:
+    msg: Pass non-empty value to the `vega_zfs_snapshot_rollback_snapshot_name` variable
+  when: vega_zfs_snapshot_rollback_snapshot_name  | length < 1
+
+
+- name: Check local services
+  ansible.builtin.service_facts:
+  # populates `services` variable with data at this point in time
+
+# Stop vegavisor
+- name: Stop vegavisor service if needed
+  when:
+    - "'vegavisor.service' in services" # don't stop if the service does not exist
+  block:
+    - name: Stop vegavisor service
+      ansible.builtin.systemd:
+        name: vegavisor
+        state: stopped
+
+    - name: Sleep for 15 seconds after stopping vegavisor
+      ansible.builtin.wait_for:
+        timeout: 15 # seconds
+
+# Stop Datanode
+- name: Stop block-explorer service if needed
+  when:
+    - "'blockexplorer.service' in services" # don't stop if the service does not exist
+  block:
+    - name: Stop block-explorer Service
+      ansible.builtin.systemd:
+        name: blockexplorer
+        state: stopped
+
+# Stop PostgreSQL
+- name: ZFS rollback local snapshot | Stop PostgreSQL service if needed
+  when:
+    - "'postgresql' in services" # don't stop if the service does not exist
+  block:
+    - name: ZFS rollback local snapshot | Stop PostgreSQL Service
+      ansible.builtin.systemd:
+        name: postgresql
+        state: stopped
+
+    - name: Sleep for 15 seconds after stopping PostgreSQL
+      ansible.builtin.wait_for:
+        timeout: 15 # seconds
+
+#
+# Rollback
+#
+- name: Rollback
+  become: true
+  register: rollback_snapshot
+  args:
+    executable: /bin/bash
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    zfs list -t snapshot -o name | grep "@{{ vega_zfs_snapshot_rollback_snapshot_name | trim }}$" | xargs -n 1 --no-run-if-empty zfs rollback -r
+  changed_when: rollback_snapshot.rc | int == 0
+
+#
+# Start services
+#
+- name: Start service if needed
+  when:
+    - vega_zfs_snapshot_rollback_start_services|default(false)
+  block:
+    - name: Start PostgreSQL service if needed
+      when:
+        - "'postgresql' in services" # don't start if the service does not exist
+      block:
+        - name: ZFS rollback local snapshot | Start PostgreSQL Service
+          ansible.builtin.systemd:
+            name: postgresql
+            state: started
+
+        - name: Wait for PostgreSQL to start listening
+          ansible.builtin.wait_for:
+            host: "127.0.0.1"
+            port: 5432
+            timeout: 30 # seconds
+
+    - name: ZFS rollback local snapshot | Start vegavisor service if needed
+      when:
+        - "'vegavisor.service' in services" # don't start if the service does not exist
+      block:
+        - name: ZFS rollback local snapshot | Start vegavisor Service
+          ansible.builtin.systemd:
+            name: vegavisor
+            state: started
+
+        - name: ZFS rollback local snapshot | Wait for core up
+          ansible.builtin.wait_for:
+            port: 3002
+            timeout: 300 # seconds
+
+    - name: ZFS rollback local snapshot | Start blockexplorer Service
+      when: "'blockexplorer.service' in services" #
+      ansible.builtin.systemd:
+        name: blockexplorer
+        state: started

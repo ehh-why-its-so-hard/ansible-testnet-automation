@@ -1,8 +1,0 @@
----
-- name: Create snapshot
-  ansible.builtin.import_tasks: create-zfs-snapshot.yaml
-  when: vega_zfs_snapshot_create
-
-- name: Rollback snapshot
-  ansible.builtin.import_tasks: rollback-zfs-snapshot.yaml
-  when: vega_zfs_snapshot_rollback

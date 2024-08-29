@@ -1,0 +1,40 @@
+---
+- name: Install required software
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - wget
+      - curl
+      - vim
+      - gnupg
+      - gnupg2
+      - acl
+      - unzip
+      - gzip
+
+- name: Ensure group "vega" exists
+  ansible.builtin.group:
+    name: vega
+    state: present
+
+- name: Ensure a 'vega' user exists
+  ansible.builtin.user:
+    name: vega
+    create_home: true
+    shell: /bin/bash
+    groups: sudo,vega
+    append: true
+
+- name: Update permissions for /home/vega
+  ansible.builtin.file:
+    path: /home/vega
+    state: directory
+    owner: vega
+    group: vega
+    mode: "0755"
+
+- name: Install golang
+  ansible.builtin.import_tasks: golang.yaml
+
+- name: Install dasel
+  ansible.builtin.import_tasks: dasel.yaml
