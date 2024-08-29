@@ -1,4 +1,6 @@
 ---
 profile: production
-skip_list:
-  - syntax-check[unknown-module]
+mock_modules:
+  - community.postgresql.postgresql_db
+  - community.postgresql.postgresql_user
+  - community.postgresql.postgresql_owner
