@@ -44,7 +44,7 @@
 
 - name: Configure | Check if data already migrated
   ansible.builtin.stat:
-    path: '/.vega_postgresql_data_directory_migrated'
+    path: "{{- vega_postgresql_external_data_directory -}}/main"
   register: directory_data_migrated
 
 - name: Configure | Migrate previous home
@@ -55,9 +55,8 @@
     chown -R postgres:postgres "{{- vega_postgresql_external_data_directory -}}";
     find "{{- vega_postgresql_external_data_directory -}}" -type d ! -perm 0750 -exec chmod 0750 {} \;
     find "{{- vega_postgresql_external_data_directory -}}" -type f ! -perm 0640 -exec chmod 0640 {} \;
-    touch "/.vega_postgresql_data_directory_migrated";
   args:
-    creates: "/.vega_postgresql_data_directory_migrated"
+    creates: "{{- vega_postgresql_external_data_directory -}}/main"
     executable: /bin/bash
   register: migrate_psql_home
   notify: "Restart postgresql"
