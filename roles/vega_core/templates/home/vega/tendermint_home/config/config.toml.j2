@@ -458,7 +458,7 @@ indexer = "{{'psql' if vega_core_with_block_explorer else 'kv'}}" # TODO(think a
 # The PostgreSQL connection configuration, the connection format:
 #   postgresql://<user>:<password>@<host>:<port>/<db>?<opts>
 {% if vega_core_with_block_explorer %}
-psql-conn = "postgresql://tendermint:tendermitn@127.0.0.1:5432/tendermint?sslmode=disable"
+psql-conn = "postgresql://tendermint:tendermint@127.0.0.1:5432/tendermint?sslmode=disable"
 {% else %}
 psql-conn = ""
 {% endif %}

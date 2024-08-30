@@ -1,12 +1,23 @@
 ---
 # this step will run only once after the flag `vega_core_run_network` is flipped. Next restarts must be done manually
-- name: Create passphrase file
+- name: Decide whether restart node(when the vega_core_run_network flag changed)
   ansible.builtin.copy:
     dest: "/home/vega/.restart_flag"
     content: "{{- vega_core_run_network -}}"
     owner: vega
     group: vega
     mode: "0644"
+  register: visor_state
   notify:
     - "Restart vegavisor"
+
+- name: Decide whether restart explorer(when the vega_core_run_network flag changed)
+  ansible.builtin.copy:
+    dest: "/home/vega/.restart_flag"
+    content: "{{- vega_core_run_network -}}"
+    owner: vega
+    group: vega
+    mode: "0644"
+  when: visor_state.changed and vega_core_with_block_explorer
+  notify:
     - "Restart block-explorer"

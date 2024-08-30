@@ -1,0 +1,47 @@
+---
+- name: Unsafe reset all for the vega-core & tendermint
+  changed_when: true # always impact the node
+  become: true
+  become_user: vega
+  ansible.builtin.shell: |
+    set -o pipefail
+    /home/vega/vegavisor_home/current/vega unsafe_reset_all --home /home/vega/vega_home
+    /home/vega/vegavisor_home/current/vega tm unsafe_reset_all --home /home/vega/tendermint_home
+  args:
+    executable: /bin/bash
+
+- name: Unsafe reset all for data node
+  changed_when: true # always impact the node
+  become: true
+  become_user: vega
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    /home/vega/vegavisor_home/current/vega datanode unsafe_reset_all --home /home/vega/vega_home
+  args:
+    executable: /bin/bash
+  when: vega_core_with_data_node
+
+- name: Delete postgresql databases for vega and
+  become: true
+  become_user: postgres
+  when: vega_core_with_data_node
+  community.postgresql.postgresql_db:
+    name: "{{ item }}"
+    port: "5432"
+    state: absent
+  with_items:
+    - vega
+    - tendermint
+
+- name: Recreate postgresql databases for vega and
+  become: true
+  become_user: postgres
+  when: vega_core_with_data_node
+  community.postgresql.postgresql_db:
+    name: "{{ item }}"
+    port: "5432"
+    state: present
+  with_items:
+    - vega
+    - tendermint

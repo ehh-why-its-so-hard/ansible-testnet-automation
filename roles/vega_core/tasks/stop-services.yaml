@@ -1,0 +1,17 @@
+---
+# This pipeline can be destructive for the network. Run it with an increased attention
+- name: Check local services
+  ansible.builtin.service_facts:
+
+- name: Stop vegavisor service if needed
+  when:
+    - "'vegavisor.service' in services" # don't stop if the service does not exist
+  block:
+    - name: Stop vegavisor service
+      ansible.builtin.systemd:
+        name: vegavisor
+        state: stopped
+
+    - name: Sleep after stopping vegavisor
+      ansible.builtin.wait_for:
+        timeout: 10 # seconds
