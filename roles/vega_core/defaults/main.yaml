@@ -12,7 +12,7 @@ vega_core_with_block_explorer: false
 vega_core_validator_node: false
 vega_core_number_of_snapshots_to_keep: 240
 vega_core_pprof_enabled: false
-
+vega_core_with_node_init: true
 
 vega_core_genesis_url: "TBD"
 vega_core_tm_seeds: []

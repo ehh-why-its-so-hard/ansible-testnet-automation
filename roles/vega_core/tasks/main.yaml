@@ -10,6 +10,7 @@
 
 - name: Get initialize
   ansible.builtin.import_tasks: initialize-node.yaml
+  when: not vega_core_with_node_init
 
 - name: Prepare node configuration
   ansible.builtin.import_tasks: configuration.yaml
