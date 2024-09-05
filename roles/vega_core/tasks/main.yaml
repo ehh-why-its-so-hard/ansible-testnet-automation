@@ -7,10 +7,15 @@
 
 - name: Get binaries
   ansible.builtin.import_tasks: get-binaries.yaml
+  when: vega_core_download_binaries
+
+- name: Build binaries
+  ansible.builtin.import_tasks: build-binaries.yaml
+  when: vega_core_build_binaries
 
 - name: Get initialize
   ansible.builtin.import_tasks: initialize-node.yaml
-  when: not vega_core_with_node_init
+  when: vega_core_with_node_init
 
 - name: Prepare node configuration
   ansible.builtin.import_tasks: configuration.yaml

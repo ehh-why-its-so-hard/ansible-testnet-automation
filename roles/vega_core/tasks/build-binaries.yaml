@@ -1,0 +1,50 @@
+---
+- name: Download vega source code
+  ansible.builtin.git:
+    repo: 'https://github.com/{{- vega_core_build_binaries_repository -}}.git'
+    dest: /home/vega/vega_code
+    single_branch: true
+    force: true
+    update: true
+    version: '{{- vega_core_build_binaries_branch -}}'
+  become: true
+  become_user: vega
+  register: get_vega_code
+
+- name: Remove binaries when code has been fetched
+  ansible.builtin.file:
+    path: '{{- item -}}'
+    state: absent
+  with_items:
+    - /tmp/vega
+    - /tmp/visor
+  when: get_vega_code.changed
+
+- name: Build new binaries
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    go build -o /tmp/vega ./cmd/vega
+    go build -o /tmp/visor ./cmd/visor
+  become: true
+  become_user: vega
+  args:
+    chdir: /home/vega/vega_code
+    executable: /bin/bash
+    creates: /tmp/vega
+  register: build_binaries
+
+- name: Copy binaries to system-wide
+  ansible.builtin.copy:
+    src: '{{- item.src -}}'
+    dest: '{{- item.dest -}}'
+    owner: root
+    group: root
+    remote_src: true
+    mode: '0755'
+  when: build_binaries.changed
+  with_items:
+    - src: /tmp/vega
+      dest: /usr/local/bin/vega
+    - src: /tmp/visor
+      dest: /usr/local/bin/visor

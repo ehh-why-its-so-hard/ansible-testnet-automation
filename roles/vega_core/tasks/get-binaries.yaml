@@ -2,7 +2,7 @@
 - name: Download vega binary
   ansible.builtin.get_url:
     force: true
-    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_binary_version -}}/vega-linux-amd64.zip"
+    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_download_binary_version -}}/vega-linux-amd64.zip"
     dest: &vega_dest /tmp/vega.zip
     mode: '0600'
 
@@ -24,7 +24,7 @@
 - name: Download visor binary
   ansible.builtin.get_url:
     force: true
-    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_binary_version -}}/visor-linux-amd64.zip"
+    url: "https://github.com/vegaprotocol/vega/releases/download/{{- vega_core_download_binary_version -}}/visor-linux-amd64.zip"
     dest: &visor_dest /tmp/visor.zip
     mode: '0600'
 

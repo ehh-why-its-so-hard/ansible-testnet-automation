@@ -55,6 +55,11 @@
     group: "vega"
     mode: "0664"
 
+- name: Check if genesis exists
+  ansible.builtin.stat:
+    path: /home/vega/tendermint_home/config/genesis.json
+  register: genesis
+
 - name: Download genesis
   ansible.builtin.get_url:
     url: "{{- vega_core_genesis_url -}}"
@@ -62,6 +67,7 @@
     mode: '0644'
     owner: vega
     group: vega
+  # when: not genesis.stat.exists # We do not want to replace it
 
 - name: Check that genesis was already prepared
   ansible.builtin.stat:
@@ -158,3 +164,11 @@
     group: "vega"
     mode: "0664"
   when: vega_core_with_block_explorer
+  register: blockexplorer_config
+
+- name: Restart blockexplorer in place
+  ansible.builtin.service:
+    state: "{{ 'restarted' if vega_core_run_network else 'stopped' }}"
+    daemon_reload: true
+    name: blockexplorer
+  when: blockexplorer_config.changed

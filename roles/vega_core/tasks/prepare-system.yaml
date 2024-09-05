@@ -20,4 +20,15 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  notify: "Restart postgresql"
+  notify: "Restart vegavisor"
+
+
+- name: Install blockexplorer systemd files
+  ansible.builtin.template:
+    src: "lib/systemd/system/blockexplorer.service.j2"
+    dest: "/lib/systemd/system/blockexplorer.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart blockexplorer"
+  when: vega_core_with_block_explorer
