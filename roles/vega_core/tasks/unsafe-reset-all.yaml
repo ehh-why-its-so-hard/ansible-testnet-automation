@@ -1,4 +1,7 @@
 ---
+- name: Check local services
+  ansible.builtin.service_facts:
+
 - name: Unsafe reset all for the vega-core & tendermint
   changed_when: true # always impact the node
   become: true
@@ -22,10 +25,23 @@
     executable: /bin/bash
   when: vega_core_with_data_node
 
+- name: Restart postgresql to kill all connections
+  ansible.builtin.service:
+    state: restarted
+    enabled: true
+    name: postgresql
+  when: "'postgresql.service' in services"
+
+- name: Wait for postgresql to be ready
+  ansible.builtin.wait_for:
+    port: "5432"
+    timeout: 300 # seconds
+  when: "'postgresql.service' in services"
+
 - name: Delete postgresql databases for vega and
   become: true
   become_user: postgres
-  when: vega_core_with_data_node
+  when: "'postgresql.service' in services"
   community.postgresql.postgresql_db:
     name: "{{ item }}"
     port: "5432"
@@ -37,7 +53,7 @@
 - name: Recreate postgresql databases for vega and
   become: true
   become_user: postgres
-  when: vega_core_with_data_node
+  when: "'postgresql.service' in services"
   community.postgresql.postgresql_db:
     name: "{{ item }}"
     port: "5432"
@@ -45,3 +61,21 @@
   with_items:
     - vega
     - tendermint
+
+- name: Update genesis version for visor binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: /usr/local/bin/visor
+    dest: /home/vega/vegavisor_home/visor
+    owner: vega
+    group: vega
+    mode: '0755'
+
+- name: Update genesis version for vega binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: /usr/local/bin/vega
+    dest: /home/vega/vegavisor_home/current/vega
+    owner: vega
+    group: vega
+    mode: '0755'

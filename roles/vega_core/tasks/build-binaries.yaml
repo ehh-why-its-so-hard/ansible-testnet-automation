@@ -1,15 +1,41 @@
 ---
-- name: Download vega source code
-  ansible.builtin.git:
-    repo: 'https://github.com/{{- vega_core_build_binaries_repository -}}.git'
-    dest: /home/vega/vega_code
-    single_branch: true
-    force: true
-    update: true
-    version: '{{- vega_core_build_binaries_branch -}}'
+- name: Check if repository already exists
+  ansible.builtin.stat:
+    path: /home/vega/vega_code/.git
+  register: vega_code_exists
+
+- name: Clone repository
+  register: vega_clone
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    git clone "https://github.com/{{- vega_core_build_binaries_repository -}}.git" /home/vega/vega_code
+    cd  /home/vega/vega_code
+    git fetch --all
+    git checkout "{{- vega_core_build_binaries_branch -}}"
   become: true
   become_user: vega
-  register: get_vega_code
+  args:
+    executable: /bin/bash
+  when: not vega_code_exists.stat.exists
+  changed_when: "'Switched to branch' in vega_clone.stdout or 'set up to track remote branch' in vega_clone.stdout"
+  failed_when: "'error' in vega_clone.stdout or 'error' in vega_clone.stderr"
+
+- name: Fetch source code for vega
+  register: vega_checkout
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    git fetch --all
+    git checkout "{{- vega_core_build_binaries_branch -}}"
+  become: true
+  become_user: vega
+  args:
+    chdir: /home/vega/vega_code
+    executable: /bin/bash
+  when: vega_code_exists.stat.exists
+  changed_when: "'Switched to branch' in vega_checkout.stdout or 'set up to track remote branch' in vega_checkout.stdout"
+  failed_when: "'error' in vega_checkout.stdout or 'error' in vega_checkout.stderr"
 
 - name: Remove binaries when code has been fetched
   ansible.builtin.file:
@@ -18,7 +44,7 @@
   with_items:
     - /tmp/vega
     - /tmp/visor
-  when: get_vega_code.changed
+  when: vega_checkout.changed or vega_clone.changed
 
 - name: Build new binaries
   ansible.builtin.shell: |
