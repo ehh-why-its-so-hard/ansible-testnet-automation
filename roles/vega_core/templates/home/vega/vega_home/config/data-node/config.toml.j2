@@ -71,17 +71,15 @@ MaxMemoryPercent = 33
   [SQLStore.ConnectionConfig]
     Host = "localhost"
     Port = 5432
-    Username = "vega"
-    Password = "vega"
-    Database = "vega"
+    Username = "{{- vega_core_data_node_postgresql_username -}}"
+    Password = "{{- vega_core_data_node_postgresql_password -}}"
+    Database = "{{- vega_core_data_node_postgresql_database -}}"
     SocketDir = "/tmp"
     MaxConnLifetime = "30m0s"
     MaxConnLifetimeJitter = "5m0s"
     MaxConnPoolSize = 0
     MinConnPoolSize = 0
     [SQLStore.ConnectionConfig.RuntimeParams]
-
-
 
 
   [SQLStore.ConnectionRetryConfig]

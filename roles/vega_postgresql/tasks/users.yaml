@@ -3,7 +3,7 @@
   become: true
   become_user: postgres
   community.postgresql.postgresql_db:
-    name: "{{ item }}"
+    name: "{{ item.database }}"
     port: "5432"
   register: create_db
   with_items: "{{ vega_postgresql_db_users }}"
@@ -13,9 +13,9 @@
   become_user: postgres
   community.postgresql.postgresql_user:
     port: "5432"
-    db: "{{ item }}"
-    name: "{{ item }}"
-    password: "{{ item }}"
+    db: "{{ item.database }}"
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"
     priv: ALL
     state: present
   with_items: "{{ vega_postgresql_db_users }}"
@@ -25,9 +25,9 @@
   become_user: postgres
   community.postgresql.postgresql_owner:
     port: "5432"
-    db: "{{ item }}"
-    new_owner: "{{ item }}"
-    obj_name: "{{ item }}"
+    db: "{{ item.database }}"
+    new_owner: "{{ item.username }}"
+    obj_name: "{{ item.database }}"
     obj_type: database
   with_items: "{{ vega_postgresql_db_users }}"
 
@@ -36,7 +36,7 @@
   become_user: postgres
   community.postgresql.postgresql_user:
     port: "5432"
-    name: "{{ item }}"
+    name: "{{ item.username }}"
     role_attr_flags: SUPERUSER
     state: present
   with_items: "{{ vega_postgresql_db_users }}"

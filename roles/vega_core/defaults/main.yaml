@@ -6,13 +6,19 @@ vega_core_with_unsafe_reset_all: false
 vega_core_chain_id: ""
 vega_core_external_endpoint: ""
 # vega version used only once for genesis version in the vegavisor and for the maintenance stuff (/usr/local/bin/vega)
-vega_core_binary_version: v0.77.6
+vega_core_download_binary_version: v0.77.6
 vega_core_with_data_node: false
 vega_core_with_block_explorer: false
 vega_core_validator_node: false
 vega_core_number_of_snapshots_to_keep: 240
 vega_core_pprof_enabled: false
 vega_core_with_node_init: true
+
+vega_core_download_binaries: true
+vega_core_build_binaries: false
+vega_core_build_binaries_repository: "vegaprotocol/vega"
+vega_core_build_binaries_branch: "develop"
+
 
 vega_core_genesis_url: "TBD"
 vega_core_tm_seeds: []
@@ -39,3 +45,10 @@ vega_core_evm_chain_configs:
     endpoint: ""
 
 vega_core_data_node_bootstrap_peers: []
+vega_core_data_node_postgresql_username: "vega"
+vega_core_data_node_postgresql_database: "vega"
+vega_core_data_node_postgresql_password: "vega"
+
+vega_core_block_explorer_postgresql_username: "tendermint"
+vega_core_block_explorer_postgresql_database: "tendermint"
+vega_core_block_explorer_postgresql_password: "tendermint"

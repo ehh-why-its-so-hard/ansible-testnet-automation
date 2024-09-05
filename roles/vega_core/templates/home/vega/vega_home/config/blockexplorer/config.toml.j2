@@ -21,9 +21,9 @@
   [Store.Postgres]
     Host = "127.0.0.1"
     Port = 5432
-    Username = "tendermint"
-    Password = "tendermint"
-    Database = "tendermint"
+    Username = "{{- vega_core_block_explorer_postgresql_username -}}"
+    Password = "{{- vega_core_block_explorer_postgresql_password -}}"
+    Database = "{{- vega_core_block_explorer_postgresql_database -}}"
     ApplicationName = "vega block explorer"
 
 [Logging]
