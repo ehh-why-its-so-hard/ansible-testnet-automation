@@ -1,0 +1,66 @@
+{{- vega_caddy_server_block_explorer_api_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') {
+    import node_identification
+
+    route /health-check {
+        reverse_proxy http://localhost:8080
+    }
+
+    # REST core
+    route / {
+        reverse_proxy http://localhost:3003
+    }
+
+    route /* {
+        reverse_proxy http://localhost:3003
+    }
+
+    # Block Explorer
+    route /grpc* {
+        reverse_proxy http://localhost:1515
+    }
+
+    route /rest* {
+        reverse_proxy http://localhost:1515
+    }
+
+    # Tendermint
+    route /status {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /genesis {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /blockchain {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /validators {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /block {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /tx_search {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /unconfirmed_txs {
+        reverse_proxy http://localhost:26657
+    }
+
+    route /websocket {
+        @websockets {
+            header Connection *Upgrade*
+            header Upgrade websocket
+        }
+        reverse_proxy @websockets localhost:26657
+    }
+
+    route /* {
+        reverse_proxy http://localhost:3003
+    }
+}

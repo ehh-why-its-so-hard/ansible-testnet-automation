@@ -1,0 +1,61 @@
+#
+# Install Caddy
+#
+
+- name: CaddyserverV2 | Caddy install prerequisites
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - debian-keyring
+      - debian-archive-keyring
+      - apt-transport-https
+      - curl
+
+- name: CaddyserverV2 | Check if Go installed
+  ansible.builtin.command: "go version"
+  changed_when: false
+
+- name: CaddyserverV2 | Ensure group 'caddy' exists
+  ansible.builtin.group:
+    name: caddy
+    state: present
+
+- name: CaddyserverV2 | Add the user 'caddy'
+  ansible.builtin.user:
+    name: caddy
+    shell: /bin/bash
+    home: /var/lib/caddy
+    groups: caddy
+    append: yes
+
+- name: CaddyserverV2 | Create a /etc/caddy directory if it does not exist
+  ansible.builtin.file:
+    path: "{{- item -}}"
+    state: directory
+    mode: '0755'
+    owner: caddy
+    group: caddy
+  with_items:
+    - "/etc/caddy"
+    - "/etc/caddy/sites"
+
+- name: CaddyserverV2 | Install xcaddy
+  ansible.builtin.apt:
+    deb: "https://github.com/caddyserver/xcaddy/releases/download/v{{ vega_caddy_server_xcaddy_version }}/xcaddy_{{ vega_caddy_server_xcaddy_version }}_linux_amd64.deb"
+
+- name: CaddyserverV2 | Compile caddy from sources
+  ansible.builtin.command: |
+    xcaddy build {{ vega_caddy_server_caddy_version }} \
+      --output /usr/bin/caddy
+      --with github.com/caddyserver/replace-response
+  notify: restart caddy
+
+
+- name: Config | Install caddy systemd files
+  ansible.builtin.template:
+    src: "lib/systemd/system/caddy.service"
+    dest: "/lib/systemd/system/caddy.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: restart caddy

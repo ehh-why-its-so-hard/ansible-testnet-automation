@@ -1,0 +1,15 @@
+vega_caddy_server_caddyfile_file_name: ""
+vega_caddy_server_node_home: "/home/vega"
+
+vega_caddy_server_xcaddy_version: 0.3.2
+vega_caddy_server_caddy_version: v2.7.5
+
+vega_caddy_server_node_id: unknown
+
+vega_caddy_server_with_block_explorer_api: false
+vega_caddy_server_with_data_node_api: false
+vega_caddy_server_with_block_explorer_ui: false
+
+vega_caddy_server_block_explorer_api_domains: []
+vega_caddy_server_data_node_api_domains: []
+vega_caddy_server_block_explorer_ui_domains: []
