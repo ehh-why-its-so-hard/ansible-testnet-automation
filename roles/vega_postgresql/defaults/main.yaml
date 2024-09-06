@@ -1,9 +1,13 @@
 ---
 vega_postgresql_version: 16
 vega_postgresql_timescaledb_version: 2.15.3
-vega_postgresql_db_users: [
-  "vega",
-  "tendermint"
-]
+vega_postgresql_db_users:
+  - username: vega
+    database: vega
+    password: vega
+  - username: tendermint
+    database: tendermint
+    password: tendermint
+
 vega_postgresql_external_data_directory: "/home/vega/postgresql"
 vega_postgresql_allow_remote_access: false

@@ -1,0 +1,17 @@
+(node_identification) {
+        header X-Vega-Node-Id "{{- vega_caddy_server_node_id  if vega_caddy_server_node_id | length > 0 else inventory_hostname -}}"
+}
+
+{
+        # acme_ca https://acme.zerossl.com/v2/DV90
+        # email todo...
+        # order replace after encode
+
+        servers {
+                metrics
+        }
+}
+
+
+
+import /etc/caddy/sites/*.caddy

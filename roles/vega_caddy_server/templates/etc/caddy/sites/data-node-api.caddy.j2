@@ -1,0 +1,17 @@
+{{- vega_caddy_server_data_node_api_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
+        import node_identification
+
+        route /health-check {
+                reverse_proxy http://localhost:8080
+        }
+
+        # REST & GQL
+        route / {
+        reverse_proxy http://localhost:3008
+        }
+
+        route /* {
+        reverse_proxy http://localhost:3008
+        }
+}
+

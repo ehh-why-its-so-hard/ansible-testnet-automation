@@ -1,0 +1,44 @@
+---
+- name: Install caddy
+  ansible.builtin.import_tasks: install-caddy.yaml
+
+- name: Setup Caddyfile
+  ansible.builtin.template:
+    src: "etc/caddy/Caddyfile.j2"
+    dest: "/etc/caddy/Caddyfile"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  notify: "Restart caddy"
+
+
+- name: Enable data-node api config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/data-node-api.caddy.j2"
+    dest: "/etc/caddy/sites/data-node-api.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_data_node_api and vega_caddy_server_data_node_api_domains | length > 0
+  notify: "Restart caddy"
+
+- name: Enable blockexplorer api config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/block-explorer-api.caddy.j2"
+    dest: "/etc/caddy/sites/block-explorer-api.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_data_node_api and vega_caddy_server_block_explorer_api_domains | length > 0
+  notify: "Restart caddy"
+
+
+- name: Enable blockexplorer ui config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/block-explorer-ui.caddy.j2"
+    dest: "/etc/caddy/sites/block-explorer-ui.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_block_explorer_ui and vega_caddy_server_block_explorer_ui_domains | length > 0
+  notify: "Restart caddy"
