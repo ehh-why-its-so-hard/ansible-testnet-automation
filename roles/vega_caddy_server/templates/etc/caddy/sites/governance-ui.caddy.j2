@@ -1,5 +1,5 @@
-{{- vega_caddy_server_governance_ui_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
-    root * /var/www/governance
+{{- vega_caddy_server_block_explorer_ui_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
+    root * /var/www/explorer
     encode gzip
 
     file_server {
