@@ -68,7 +68,7 @@
     group: root
     remote_src: true
     mode: '0755'
-  when: build_binaries.changed
+  when: build_binaries.changed # noqa: no-handler
   with_items:
     - src: /tmp/vega
       dest: /usr/local/bin/vega

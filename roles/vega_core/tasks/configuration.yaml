@@ -171,4 +171,4 @@
     state: "{{ 'restarted' if vega_core_run_network else 'stopped' }}"
     daemon_reload: true
     name: blockexplorer
-  when: blockexplorer_config.changed
+  when: blockexplorer_config.changed # noqa: no-handler

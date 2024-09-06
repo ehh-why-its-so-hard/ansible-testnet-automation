@@ -1,7 +1,4 @@
-#
-# Install Caddy
-#
-
+---
 - name: CaddyserverV2 | Caddy install prerequisites
   ansible.builtin.apt:
     update_cache: true
@@ -26,7 +23,7 @@
     shell: /bin/bash
     home: /var/lib/caddy
     groups: caddy
-    append: yes
+    append: true
 
 - name: CaddyserverV2 | Create a /etc/caddy directory if it does not exist
   ansible.builtin.file:
@@ -41,15 +38,16 @@
 
 - name: CaddyserverV2 | Install xcaddy
   ansible.builtin.apt:
-    deb: "https://github.com/caddyserver/xcaddy/releases/download/v{{ vega_caddy_server_xcaddy_version }}/xcaddy_{{ vega_caddy_server_xcaddy_version }}_linux_amd64.deb"
+    deb: "https://github.com/caddyserver/xcaddy/releases/download/v{{ vega_caddy_server_xcaddy_version }}/xcaddy_{{ vega_caddy_server_xcaddy_version }}_linux_amd64.deb" # noqa: yaml[line-length]
 
 - name: CaddyserverV2 | Compile caddy from sources
   ansible.builtin.command: |
     xcaddy build {{ vega_caddy_server_caddy_version }} \
       --output /usr/bin/caddy
       --with github.com/caddyserver/replace-response
+  args:
+    creates: /usr/bin/caddy
   notify: "Restart caddy"
-
 
 - name: Config | Install caddy systemd files
   ansible.builtin.template:
