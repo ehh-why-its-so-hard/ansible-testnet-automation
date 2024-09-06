@@ -9,8 +9,7 @@
     owner: "caddy"
     group: "caddy"
     mode: "0644"
-  when: caddyfile_file_name | d(False)
-  notify: restart caddy
+  notify: "Restart caddy"
 
 
 - name: Enable data-node api config
@@ -21,7 +20,7 @@
     group: "caddy"
     mode: "0644"
   when: vega_caddy_server_with_data_node_api and vega_caddy_server_data_node_api_domains | length > 0
-  notify: restart caddy
+  notify: "Restart caddy"
 
 - name: Enable blockexplorer api config
   ansible.builtin.template:
@@ -31,7 +30,7 @@
     group: "caddy"
     mode: "0644"
   when: vega_caddy_server_with_data_node_api and vega_caddy_server_block_explorer_api_domains | length > 0
-  notify: restart caddy
+  notify: "Restart caddy"
 
 
 - name: Enable blockexplorer ui config
@@ -42,4 +41,4 @@
     group: "caddy"
     mode: "0644"
   when: vega_caddy_server_with_block_explorer_ui and vega_caddy_server_block_explorer_ui_domains | length > 0
-  notify: restart caddy
+  notify: "Restart caddy"

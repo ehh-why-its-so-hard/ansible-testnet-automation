@@ -48,7 +48,7 @@
     xcaddy build {{ vega_caddy_server_caddy_version }} \
       --output /usr/bin/caddy
       --with github.com/caddyserver/replace-response
-  notify: restart caddy
+  notify: "Restart caddy"
 
 
 - name: Config | Install caddy systemd files
@@ -58,4 +58,4 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  notify: restart caddy
+  notify: "Restart caddy"
