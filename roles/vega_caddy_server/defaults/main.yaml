@@ -11,8 +11,10 @@ vega_caddy_server_with_block_explorer_api: false
 vega_caddy_server_with_data_node_api: false
 vega_caddy_server_with_block_explorer_ui: false
 vega_caddy_server_with_governance_ui: false
+vega_caddy_server_with_trading_ui: false
 
 vega_caddy_server_block_explorer_api_domains: []
 vega_caddy_server_data_node_api_domains: []
 vega_caddy_server_block_explorer_ui_domains: []
 vega_caddy_server_governance_ui_domains: []
+vega_caddy_server_trading_ui_domains: []

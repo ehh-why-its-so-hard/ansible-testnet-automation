@@ -51,3 +51,13 @@
     mode: "0644"
   when: vega_caddy_server_with_governance_ui and vega_caddy_server_governance_ui_domains | length > 0
   notify: "Restart caddy"
+
+- name: Enable trading ui config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/trading-ui.caddy.j2"
+    dest: "/etc/caddy/sites/trading-ui.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_trading_ui and vega_caddy_server_trading_ui_domains | length > 0
+  notify: "Restart caddy"
