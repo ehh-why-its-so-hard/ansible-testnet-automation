@@ -20,7 +20,9 @@
 - name: Create pool
   when: vega_zfs_device != ""
   ansible.builtin.shell: |
-    zpool create -o ashift=12 "{{- vega_zfs_pool_name -}}" "{{- vega_zfs_device -}}";
+    set -o pipefail
+
+    zpool create -f -o ashift=12 "{{- vega_zfs_pool_name -}}" "{{- vega_zfs_device -}}";
     zfs set atime=off "{{- vega_zfs_pool_name -}}";
     zfs set compression=zstd "{{- vega_zfs_pool_name -}}";
     # enable improved extended attributes - keep in inode instead of dir;
@@ -29,11 +31,14 @@
     zfs set redundant_metadata=most "{{- vega_zfs_pool_name -}}";
     touch "/.zfs_created_{{- vega_zfs_pool_name -}}"
   args:
+    executable: /bin/bash
     creates: "/.zfs_created_{{- vega_zfs_pool_name -}}"
 
 - name: Create dataset
   when: vega_zfs_device != ""
   ansible.builtin.shell: |
+    set -o pipefail
+
     mkdir -p "{{- item.mount_point -}}";
     zfs create "{{- item.dataset_name -}}";
     zfs set atime=off "{{- item.dataset_name -}}";
@@ -46,6 +51,7 @@
 
     touch "{{- item.mount_point -}}/.zfs_pool"
   args:
+    executable: /bin/bash
     creates: "{{- item.mount_point -}}/.zfs_pool"
   with_items:
     - dataset_name: "{{- vega_zfs_pool_name -}}/home"

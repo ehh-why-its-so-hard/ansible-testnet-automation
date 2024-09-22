@@ -7,8 +7,14 @@
         index index.html
     }
 
+    handle_path /trading-view-bundle/* {
+        root * /var/www/trading-view-bundle
+        import cors *
+    }
+
+
     handle_errors {
-            rewrite * /index.html
-            file_server
+        rewrite * /index.html
+        file_server
     }
 }
