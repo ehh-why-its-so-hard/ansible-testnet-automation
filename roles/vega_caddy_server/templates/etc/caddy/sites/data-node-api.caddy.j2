@@ -7,11 +7,11 @@
 
         # REST & GQL
         route / {
-        reverse_proxy http://localhost:3008
+                reverse_proxy http://localhost:3008
         }
 
         route /* {
-        reverse_proxy http://localhost:3008
+                reverse_proxy http://localhost:3008
         }
 }
 
