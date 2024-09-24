@@ -52,7 +52,7 @@
   block:
     - name: Vega-Monitoring | Download vega-monitoring binary archive
       ansible.builtin.get_url:
-        url: "https://github.com/{{- vega_monitoring_repository -}}/releases/download/{{- vega_monitoring_version -}}/vega-monitoring-{{- os -}}-{{- arch -}}.zip"
+        url: "https://github.com/{{- vega_monitoring_repository -}}/releases/download/{{- vega_monitoring_version -}}/vega-monitoring-{{- os -}}-{{- arch -}}.zip" # noqa: yaml[line-length]
         dest: "/tmp"
         mode: "0644"
 
