@@ -1,3 +1,4 @@
+---
 - name: "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
   ansible.builtin.systemd:
     name: grafana-mimir@{{ grafana_mimir_instance_id }}

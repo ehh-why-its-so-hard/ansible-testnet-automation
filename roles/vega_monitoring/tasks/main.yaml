@@ -2,7 +2,7 @@
 - name: Set architecture specific variables
   set_fact:
     arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
-    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux'}}"
+    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux' }}"
 
 - name: Vega-Monitoring | Add vega-monitoring systemd service
   ansible.builtin.template:

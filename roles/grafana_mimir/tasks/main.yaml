@@ -1,8 +1,8 @@
 ---
 - name: Set architecture specific variables
-  set_fact:
+  ansible.builtin.set_fact:
     arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
-    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux'}}"
+    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux' }}"
 
 - name: Grafana-Mimir | Ensure group 'mimir' exists
   ansible.builtin.group:
@@ -15,9 +15,7 @@
     shell: /bin/bash
     home: "{{- grafana_mimir_home -}}"
     groups: mimir
-    append: yes
-
-
+    append: true
 
 - name: Grafana-Mimir | Create all directories
   ansible.builtin.file:
@@ -98,7 +96,7 @@
   ansible.builtin.template:
     src: grafana-mimir.service.j2
     dest: /etc/systemd/system/grafana-mimir@.service
-    mode: 0750
+    mode: '0750'
   become: true
   notify:
     - "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
