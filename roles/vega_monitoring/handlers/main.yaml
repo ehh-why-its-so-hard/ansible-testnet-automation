@@ -1,0 +1,14 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  listen: "Restart systemd"
+
+- name: Restart vega-monitoring
+  ansible.builtin.systemd:
+    name: vega-monitoring
+    state: restarted
+  become: true
+  listen: "Restart vega-monitoring"
+  when: not ansible_check_mode

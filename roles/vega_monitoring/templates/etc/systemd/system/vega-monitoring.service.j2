@@ -1,0 +1,20 @@
+[Unit]
+Description=vega-monitoring
+Documentation=https://github.com/vegaprotocol/vega-monitoring
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+User=vega
+Group=vega
+ExecStart="{{ vega_monitoring_home }}/vega-monitoring" service start --config "{{ vega_monitoring_home }}/config.toml"
+TimeoutStopSec=10s
+LimitNOFILE=1048576
+LimitNPROC=512
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Restart=on-failure
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
