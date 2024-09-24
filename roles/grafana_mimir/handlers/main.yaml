@@ -1,0 +1,8 @@
+- name: "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
+  ansible.builtin.systemd:
+    name: grafana-mimir@{{ grafana_mimir_instance_id }}
+    daemon_reload: true
+    state: restarted
+  become: true
+  listen: "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
+  when: not ansible_check_mode

@@ -1,0 +1,20 @@
+[Unit]
+Description=Grafana Mimir
+Documentation=https://github.com/grafana/mimir
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+User=mimir
+Group=mimir
+ExecStart=/usr/local/bin/grafana-mimir --config.file /etc/mimir/%i/grafana-mimir-config.yaml
+WorkingDirectory={{- grafana_mimir_home -}}/%i/
+TimeoutStopSec=10s
+LimitNOFILE=1048576
+LimitNPROC=512
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Restart=on-failure
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target

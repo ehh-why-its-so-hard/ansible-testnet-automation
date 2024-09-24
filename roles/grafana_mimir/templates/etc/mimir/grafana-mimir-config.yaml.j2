@@ -1,0 +1,106 @@
+# Do not use this configuration in production.
+# It is for demonstration purposes only.
+multitenancy_enabled: false
+
+server:
+  http_listen_port: {{ grafana_mimir_http_port | default(8080) }}
+  grpc_listen_port: {{ grafana_mimir_grpc_port | default(9095) }}
+  log_level: info
+
+common:
+  storage:
+    backend: filesystem
+    filesystem:
+      dir: {{ grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage
+
+# compactor (stateless)
+# - compacts and optimizes blocks of data
+# - deletes old blocks (retention)
+# - runs on cron-like
+compactor:
+  sharding_ring:
+    kvstore:
+      store: memberlist
+    instance_id: {{ grafana_mimir_instance_id | default(inventory_hostname) }}
+
+# various limits
+limits:
+  compactor_blocks_retention_period: {{ mimir_retention | default("90d") }}
+  ingestion_rate: 1000000  # default: 10000
+  max_global_series_per_user: 10000000  # default: 150000
+  ruler_max_rules_per_rule_group: 200  # default: 20
+
+# distributor (stateless)
+# - cleans and validates incoming data (including: deduplication)
+# - forwards data to ingester
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+    instance_id: {{ grafana_mimir_instance_id | default(inventory_hostname) }}
+
+# ingester (stateful)
+# - temporarliy stores data in memory or disk
+# - periodically (every 2 hours) uploads to long-term storage
+# - Write-ahead log (WAL) + Write-behind log (WBL)
+ingester:
+  ring:
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+    instance_id: {{ grafana_mimir_instance_id | default(inventory_hostname) }}
+
+# querier (stateless)
+# - uses store-gateway to query long-term storage
+# - uses ingester to query recently written data
+querier:
+
+# query-frontend (stateless)
+frontend:
+  log_queries_longer_than: 1m
+  # cache?
+  # cache_results: true
+
+# store-gateway (stateful)
+# - queries blocks from long-term storage
+# - used by querier and ruler
+store_gateway:
+  sharding_ring:
+    replication_factor: 1
+
+blocks_storage:
+  filesystem:
+      dir: {{ grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/blocks
+
+# alertmanager (stateful)
+# - accepts alert notifications from ruler
+# - deduplicates and groups alert notifications
+# - routes alert notifications to a notification channel
+alertmanager:
+  enable_api: true
+  external_url: {{ grafana_mimir_external_url | default('') }}/alertmanager
+
+alertmanager_storage:
+  filesystem:
+      dir: {{ grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/alertmanager
+
+# ruler (stateful)
+# - two types of rules:
+#   - recording rules - evaluates expressions at intervals and writes the results back to the ingester
+#   - alerting rules - evaluates expressions at intervals and triggers alerts
+ruler:
+  enable_api: true
+  alertmanager_url: http://localhost:{{ grafana_mimir_http_port | default(9090) }}/alertmanager
+
+ruler_storage:
+  filesystem:
+      dir: {{ grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/ruler
+
+# disable sending statistics to grafana
+usage_stats:
+  enabled: false
+
+memberlist:
+  node_name: {{ grafana_mimir_instance_id | default(inventory_hostname) }}
+  advertise_port: {{ grafana_mimir_gossip_port | default(7946) }}
+  bind_port: {{ grafana_mimir_gossip_port | default(7946) }}
