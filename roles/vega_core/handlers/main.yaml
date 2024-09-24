@@ -5,6 +5,7 @@
     daemon_reload: true
     name: vegavisor
   listen: "Restart vegavisor"
+  when: not ansible_check_mode
 
 - name: Restart blockexplorer
   ansible.builtin.service:
@@ -12,3 +13,4 @@
     daemon_reload: true
     name: blockexplorer
   listen: "Restart blockexplorer"
+  when: not ansible_check_mode
