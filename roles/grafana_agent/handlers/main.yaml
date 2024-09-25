@@ -1,0 +1,6 @@
+- name: Restart grafana-agent
+  ansible.builtin.service:
+    name: grafana-agent
+    state: restarted
+  listen: Restart grafana-agent
+  when: not ansible_check_mode
