@@ -1,6 +1,7 @@
 ---
 - name: Stop services
   ansible.builtin.import_tasks: stop-services.yaml
+  when: vega_core_with_unsafe_reset_all
 
 - name: Prepare system
   ansible.builtin.import_tasks: prepare-system.yaml

@@ -48,6 +48,7 @@ vega_core_data_node_bootstrap_peers: []
 vega_core_data_node_postgresql_username: "vega"
 vega_core_data_node_postgresql_database: "vega"
 vega_core_data_node_postgresql_password: "vega"
+vega_core_data_node_with_monitoring_optimized_retention: false
 
 vega_core_block_explorer_postgresql_username: "tendermint"
 vega_core_block_explorer_postgresql_database: "tendermint"
