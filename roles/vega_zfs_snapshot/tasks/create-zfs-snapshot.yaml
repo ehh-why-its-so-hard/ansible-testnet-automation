@@ -71,14 +71,14 @@
 
 - name: Start service if needed
   when:
-    - vega_zfs_snapshot_create_stop_services|default(false)
+    - vega_zfs_snapshot_create_stop_services
   block:
 
     # Start PostgreSQL
     - name: Start PostgreSQL service if needed
       when:
         - "'postgresql' in services" # don't start if the service does not exist
-        - services['postgresql']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+        # - services['postgresql']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
       block:
         - name: ZFS create local snapshot | Start PostgreSQL Service
           ansible.builtin.systemd:
@@ -95,7 +95,7 @@
     - name: Start vegavisor service if needed
       when:
         - "'vegavisor.service' in services" # don't start if the service does not exist
-        - services['vegavisor.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+        # - services['vegavisor.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
       block:
         - name: ZFS create local snapshot | Start vegavisor Service
           ansible.builtin.systemd:
@@ -110,7 +110,7 @@
     - name: Start block-explorer service if needed
       when:
         - "'blockexplorer.service' in services" # don't start if the service does not exist
-        - services['blockexplorer.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
+        # - services['blockexplorer.service']['state'] == "running" # start only if the service was running (and was stopped before taking zfs snapshot)
       block:
         - name: Start block-explorer Service
           ansible.builtin.systemd:

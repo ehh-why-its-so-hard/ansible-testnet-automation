@@ -1,0 +1,50 @@
+---
+- name: Grafana Agent | Install grafana-agent
+  ansible.builtin.apt:
+    deb: "https://github.com/{{- grafana_agent_repository -}}/releases/download/v{{- grafana_agent_version -}}/grafana-agent-{{- grafana_agent_version -}}-1.amd64.deb"
+
+- name: Grafana Agent | Update CUSTOM_ARGS environment variables for grafana config
+  ansible.builtin.lineinfile:
+    path: /etc/default/grafana-agent
+    regexp: "^CUSTOM_ARGS="
+    line: CUSTOM_ARGS=-config.expand-env
+  when: not ansible_check_mode
+
+
+- name: Grafana Agent | Update CONFIG_FILE environment variables for grafana config
+  ansible.builtin.lineinfile:
+    path: /etc/default/grafana-agent
+    regexp: "^CONFIG_FILE="
+    line: CONFIG_FILE="/etc/grafana-agent.yaml"
+  when: not ansible_check_mode
+
+- name: Grafana Agent | Create grafana-agent configs dir
+  ansible.builtin.file:
+    path: /etc/grafana-agent.d
+    state: directory
+    mode: "0755"
+
+- name: Grafana Agent | Agent config
+  ansible.builtin.copy:
+    content: "{{ grafana_agent_config_content }}"
+    dest: /etc/grafana-agent.yaml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart grafana-agent
+  when: not ansible_check_mode
+
+- name: Grafana Agent | Ensure agent is running as root
+  ansible.builtin.lineinfile:
+    path: /usr/lib/systemd/system/grafana-agent.service
+    regexp: "^User="
+    line: User=root
+  when: not ansible_check_mode
+
+- name: Grafana Agent | Start grafana-agent
+  ansible.builtin.systemd:
+    name: grafana-agent
+    state: started
+    daemon_reload: true
+    enabled: true
+  when: not ansible_check_mode

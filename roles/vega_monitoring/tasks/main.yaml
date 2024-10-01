@@ -1,0 +1,73 @@
+---
+- name: Set architecture specific variables
+  ansible.builtin.set_fact:
+    arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux' }}"
+
+- name: Vega-Monitoring | Add vega-monitoring systemd service
+  ansible.builtin.template:
+    src: etc/systemd/system/vega-monitoring.service.j2
+    dest: /etc/systemd/system/vega-monitoring.service
+    mode: "0750"
+  become: true
+  notify:
+    - Reload systemd
+    - Restart vega-monitoring
+
+- name: Vega-Monitoring | Create home directory
+  ansible.builtin.file:
+    path: "{{ vega_monitoring_home }}"
+    state: directory
+    owner: "vega"
+    group: "vega"
+    mode: "0775"
+
+- name: Vega-Monitoring | Update vega-monitoring config.toml
+  ansible.builtin.copy:
+    content: "{{ vega_monitoring_config_template_content }}"
+    dest: "{{ vega_monitoring_home }}/config.toml"
+    owner: "vega"
+    group: "vega"
+    mode: "0664"
+  become: true
+  notify:
+    - Restart vega-monitoring
+
+#
+# Install vega-monitoring binary
+#
+- name: Vega-Monitoring | Check if vega-monitoring is installed
+  ansible.builtin.command: "{{ vega_monitoring_home }}/vega-monitoring version"
+  register: vega_monitoring_installed_version
+  changed_when: false
+  # exit codes
+  # - 0 - ok
+  # - 2 - invalid usage of some shell built-in command
+  # - 127 - cannot find the command that was specified
+  failed_when: vega_monitoring_installed_version.rc != 0 and vega_monitoring_installed_version.rc != 127 and vega_monitoring_installed_version.rc != 2
+
+- name: Vega-Monitoring | Install vega-monitoring
+  when:
+    - (vega_monitoring_installed_version.rc != 0) or (not vega_monitoring_version in vega_monitoring_installed_version.stdout)
+  block:
+    - name: Vega-Monitoring | Download vega-monitoring binary archive
+      ansible.builtin.get_url:
+        url: "https://github.com/{{- vega_monitoring_repository -}}/releases/download/{{- vega_monitoring_version -}}/vega-monitoring-{{- os -}}-{{- arch -}}.zip" # noqa: yaml[line-length]
+        dest: "/tmp"
+        mode: "0644"
+
+    - name: Vega-Monitoring | Extract vega-monitoring install archive
+      become: true
+      ansible.builtin.unarchive:
+        src: "/tmp/vega-monitoring-{{ os }}-{{ arch }}.zip"
+        dest: "{{ vega_monitoring_home }}"
+        copy: false
+      ignore_errors: "{{ ansible_check_mode }}"
+
+    - name: Vega-Monitoring | Validate vega-monitoring version
+      ansible.builtin.command: "{{ vega_monitoring_home }}/vega-monitoring version"
+      register: vega_monitoring_installed_version
+      changed_when: not vega_monitoring_installed_version.failed
+      failed_when: (vega_monitoring_installed_version.rc != 0) or (not vega_monitoring_version in vega_monitoring_installed_version.stdout)
+      notify:
+        - Restart vega-monitoring

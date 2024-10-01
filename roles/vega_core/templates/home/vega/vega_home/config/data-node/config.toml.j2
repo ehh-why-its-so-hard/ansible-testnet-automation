@@ -91,6 +91,169 @@ MaxMemoryPercent = 33
     MaxSize = 100
     MaxAge = 2
 
+{% if vega_core_data_node_with_monitoring_optimized_retention %}
+
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "balances"
+    DataRetentionPeriod = "7 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "checkpoints"
+    DataRetentionPeriod = "7 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "conflated_balances"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "delegations"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "ledger"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "orders"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_1_minute"
+    DataRetentionPeriod = "1 month"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_5_minutes"
+    DataRetentionPeriod = "1 month"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_15_minutes"
+    DataRetentionPeriod = "1 month"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_30_minutes"
+    DataRetentionPeriod = "1 month"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_1_hour"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_4_hours"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_6_hours"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_8_hours"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_12_hours"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_1_day"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "trades_candle_7_days"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "market_data"
+    DataRetentionPeriod = "14 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "margin_levels"
+    DataRetentionPeriod = "14 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "conflated_margin_levels"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "positions"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "conflated_positions"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "liquidity_provisions"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "markets"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "deposits"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "withdrawals"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "blocks"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "rewards"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "stop_orders"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "funding_period_data_points"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "party_activity_streaks"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "referral_programs"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "referral_set_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "oracle_data"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "oracle_data_oracle_specs"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "vesting_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "volume_discount_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "referral_set_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "fees_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "funding_payment"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "volume_discount_programs"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "party_locked_balances"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "party_vesting_balances"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "party_vesting_stats"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "fees_stats_by_party"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "paid_liquidity_fees"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "transfer_fees_discount"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "time_weighted_notional_positions"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "game_team_scores"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "game_party_scores"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "volume_rebate_programs"
+    DataRetentionPeriod = "45 days"
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "volume_rebate_stats"
+    DataRetentionPeriod = "45 days"
+{% endif %}
+
 [Gateway]
   Port = 3008
   IP = "0.0.0.0"

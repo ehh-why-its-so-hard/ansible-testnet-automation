@@ -1,0 +1,102 @@
+---
+- name: Set architecture specific variables
+  ansible.builtin.set_fact:
+    arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+    os: "{{ 'darwin' if ansible_distribution == 'MacOSX' else 'linux' }}"
+
+- name: Grafana-Mimir | Ensure group 'mimir' exists
+  ansible.builtin.group:
+    name: mimir
+    state: present
+
+- name: Grafana-Mimir | Add the user 'mimir'
+  ansible.builtin.user:
+    name: mimir
+    shell: /bin/bash
+    home: "{{- grafana_mimir_home -}}"
+    groups: mimir
+    append: true
+
+- name: Grafana-Mimir | Create all directories
+  ansible.builtin.file:
+    path: "{{ item.dir }}"
+    state: directory
+    owner: mimir
+    group: mimir
+    mode: '0775'
+  loop:
+    - dir: /etc/mimir
+    - dir: "/etc/mimir/{{- grafana_mimir_instance_id -}}"
+    - dir: "{{- grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}"
+    - dir: "{{- grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage"
+    - dir: "{{- grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/blocks"
+    - dir: "{{- grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/alertmanager"
+    - dir: "{{- grafana_mimir_home -}}/{{- grafana_mimir_instance_id -}}/storage/ruler"
+
+#
+# Install mimir binary
+#
+- name: Grafana-Mimir | Check if grafana-mimir is installed
+  ansible.builtin.command: "grafana-mimir --version"
+  register: grafana_mimir_installed_version
+  changed_when: false
+  # exit codes
+  # - 0 - ok
+  # - 2 - invalid usage of some shell built-in command
+  # - 127 - cannot find the command that was specified
+  failed_when: grafana_mimir_installed_version.rc != 0 and grafana_mimir_installed_version.rc != 127 and grafana_mimir_installed_version.rc != 2
+
+- name: Grafana-Mimir | Install grafana-mimir
+  when:
+    - (grafana_mimir_installed_version.rc != 0) or (not grafana_mimir_version in grafana_mimir_installed_version.stdout)
+  block:
+    - name: Grafana-Mimir | Download grafana-mimir
+      ansible.builtin.get_url:
+        url: "https://github.com/{{- grafana_mimir_repository -}}/releases/download/mimir-{{ grafana_mimir_version }}/mimir-{{ os }}-{{ arch }}"
+        dest: "/tmp"
+        mode: "0644"
+
+    - name: Grafana-Mimir | Copy grafana-mimir binary to bin
+      ansible.builtin.copy:
+        src: "/tmp/mimir-{{ os }}-{{ arch }}"
+        remote_src: true
+        dest: /usr/local/bin/grafana-mimir
+        owner: root
+        group: root
+        mode: '0755'
+      ignore_errors: "{{ ansible_check_mode }}"
+
+    - name: Grafana-Mimir | Validate grafana-mimir version
+      ansible.builtin.command: "grafana-mimir --version"
+      register: grafana_mimir_installed_version
+      changed_when: not grafana_mimir_installed_version.failed
+      failed_when: (grafana_mimir_installed_version.rc != 0) or (not grafana_mimir_version in grafana_mimir_installed_version.stdout)
+      notify:
+        - "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
+
+#
+# Update Internal grafana-mimir config
+#
+- name: Grafana-Mimir | Update /etc/mimir/internal/grafana-mimir-config.yaml
+  ansible.builtin.template:
+    src: etc/mimir/grafana-mimir-config.yaml.j2
+    dest: "/etc/mimir/{{- grafana_mimir_instance_id -}}/grafana-mimir-config.yaml"
+    owner: mimir
+    group: mimir
+    mode: "0600"
+  become: true
+  no_log: true
+  notify:
+    - "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"
+
+#
+# Setup grafana-mimir@ service
+#
+- name: Grafana-Mimir | Add grafana-mimir systemd service
+  ansible.builtin.template:
+    src: grafana-mimir.service.j2
+    dest: /etc/systemd/system/grafana-mimir@.service
+    mode: '0750'
+  become: true
+  notify:
+    - "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"

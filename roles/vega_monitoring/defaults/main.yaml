@@ -1,0 +1,6 @@
+---
+vega_monitoring_home: "/home/vega/vega_monitoring_home"
+vega_monitoring_version: v0.15.4
+# config template may be loaded when the lookup plugin is enabled with the following snipped"{{ lookup('file', 'configs/vega-monitoring-template.toml') }}"
+vega_monitoring_config_template_content: "# see https://github.com/vegaprotocol/vega-monitoring/ for docs"
+vega_monitoring_repository: vegaprotocol/vega-monitoring

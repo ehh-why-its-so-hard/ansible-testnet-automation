@@ -1,0 +1,5 @@
+---
+grafana_agent_version: 0.43.0
+grafana_agent_repository: grafana/agent
+# config template may be loaded when the lookup plugin is enabled with the following snipped "{{ lookup('file', 'configs/grafana-agent-monitoring-template.yaml') }}"
+grafana_agent_config_content: "# empty content"

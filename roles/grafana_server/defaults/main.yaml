@@ -1,0 +1,15 @@
+---
+grafana_server_version: 11.2.0
+grafana_server_install: true
+
+grafana_server_data_dir: /var/lib/grafana
+grafana_server_install_nginx_config: false
+grafana_server_external_domain: grafana.local.mainnet.community
+grafana_server_enabled_plugins:
+  - grafana-sentry-datasource
+
+grafana_server_use_postgresql_dashboard_db: false
+grafana_server_postgresql_dashboard_db_host: ""
+grafana_server_postgresql_dashboard_db_name: ""
+grafana_server_postgresql_dashboard_db_user: ""
+grafana_server_postgresql_dashboard_db_pass: ""

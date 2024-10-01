@@ -1,0 +1,10 @@
+---
+grafana_mimir_version: 2.13.0
+grafana_mimir_instance_id: internal
+grafana_mimir_home: /home/mimir
+
+grafana_mimir_repository: grafana/mimir
+grafana_mimir_external_url: "example.com"
+grafana_mimir_http_port: 8080
+grafana_mimir_grpc_port: 9095
+grafana_mimir_gossip_port: 7946

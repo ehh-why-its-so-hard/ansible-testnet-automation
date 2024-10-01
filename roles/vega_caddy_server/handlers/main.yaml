@@ -4,3 +4,4 @@
     name: caddy
     state: restarted
     enabled: true
+  when: not ansible_check_mode
