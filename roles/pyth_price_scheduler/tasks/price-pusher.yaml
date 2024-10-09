@@ -40,7 +40,7 @@
 
 - name: Copy config file
   ansible.builtin.copy:
-    dest: "home/pyth-price-scheduler/price-config.yaml"
+    dest: "/home/pyth-price-scheduler/price-config.yaml"
     content: "{{ pyth_price_scheduler_price_config_content }}"
     owner: pyth-price-scheduler
     group: pyth-price-scheduler

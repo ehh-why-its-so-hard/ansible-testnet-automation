@@ -1,5 +1,5 @@
 [Unit]
-Description=Pyth price process watcher {{ price_pusher_name }}
+Description=Pyth price process watcher
 Documentation=https://github.com/vegaprotocol/process-watcher
 After=docker.service
 Requires=docker.service
@@ -11,7 +11,7 @@ User=root
 Group=root
 TimeoutStartSec=0
 Restart=always
-ExecStart=/usr/bin/process-watcher run --config-path /etc/pyth-process-watcher-config-{{- price_pusher_name -}}.toml
+ExecStart=/usr/bin/process-watcher run --config-path /etc/pyth-process-watcher-config.toml
 
 [Install]
 WantedBy=multi-user.target

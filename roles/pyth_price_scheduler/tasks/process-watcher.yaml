@@ -24,7 +24,7 @@
 - name: Copy process watcher config
   ansible.builtin.template:
     src: "etc/pyth-process-watcher-config.toml"
-    dest: "/etc/pyth-process-watcher-config-{{- price_pusher_name -}}.toml"
+    dest: "/etc/pyth-process-watcher-config.toml"
     owner: root
     group: root
     mode: '0644'
@@ -32,7 +32,7 @@
 - name: Copy process watcher service file
   ansible.builtin.template:
     src: "lib/systemd/system/pyth-process-watcher.service.j2"
-    dest: "/lib/systemd/system/pyth-process-watcher-{{- price_pusher_name -}}.service"
+    dest: "/lib/systemd/system/pyth-process-watcher.service"
     owner: root
     group: root
     mode: '0644'
@@ -40,7 +40,7 @@
 
 - name: Start pusher watcher service
   ansible.builtin.service:
-    name: "pyth-process-watcher-{{- price_pusher_name -}}"
+    name: "pyth-process-watcher"
     state: restarted
     enabled: true
     daemon_reload: true

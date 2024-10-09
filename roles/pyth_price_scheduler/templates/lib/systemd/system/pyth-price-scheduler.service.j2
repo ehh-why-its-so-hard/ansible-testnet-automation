@@ -1,5 +1,5 @@
 [Unit]
-Description=Pyth price pusher {{ price_pusher_name }}
+Description=Pyth price pusher
 Documentation=https://github.com/pyth-network/pyth-crosschain/tree/main/price_pusher
 After=docker.service
 Requires=docker.service
@@ -17,9 +17,9 @@ ExecStart=/usr/bin/docker run \
     --name pyth-price-scheduler \
     -v /home/pyth-price-scheduler:/config \
     {{ pyth_price_scheduler_docker_image }} \
-    -- \
+    npm run start -- \
     evm \
-    --endpoint "{{- price_pusher_endpoint -}}" \
+    --endpoint "{{- pyth_price_scheduler_endpoint -}}" \
     --mnemonic-file "/config/mnemonic" \
     --pyth-contract-address "{{- pyth_price_scheduler_contract_address -}}" \
     --price-service-endpoint "{{- pyth_price_scheduler_service_endpoint -}}" \
