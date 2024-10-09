@@ -1,0 +1,31 @@
+[Unit]
+Description=Pyth price pusher {{ price_pusher_name }}
+Documentation=https://github.com/pyth-network/pyth-crosschain/tree/main/price_pusher
+After=docker.service
+Requires=docker.service
+
+[Service]
+User=pyth-price-scheduler
+Group=pyth-price-scheduler
+TimeoutStartSec=0
+Restart=always
+ExecStop=/usr/bin/docker kill pyth-price-scheduler
+ExecStartPre=-/usr/bin/docker stop pyth-price-scheduler
+ExecStartPre=-/usr/bin/docker rm pyth-price-scheduler
+ExecStartPre=/usr/bin/docker pull {{ pyth_price_scheduler_docker_image }}
+ExecStart=/usr/bin/docker run \
+    --name pyth-price-scheduler \
+    -v /home/pyth-price-scheduler:/config \
+    {{ pyth_price_scheduler_docker_image }} \
+    -- \
+    evm \
+    --endpoint "{{- price_pusher_endpoint -}}" \
+    --mnemonic-file "/config/mnemonic" \
+    --pyth-contract-address "{{- pyth_price_scheduler_contract_address -}}" \
+    --price-service-endpoint "{{- pyth_price_scheduler_service_endpoint -}}" \
+    --price-config-file "/config/price-config.yaml" \
+    --polling-frequency 5
+
+
+[Install]
+WantedBy=multi-user.target

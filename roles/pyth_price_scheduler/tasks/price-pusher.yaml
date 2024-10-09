@@ -1,0 +1,69 @@
+---
+- name: Install python packages for Ansible
+  ansible.builtin.pip:
+    name:
+      - docker
+
+- name: Pull an price scheduler docker image
+  community.docker.docker_image:
+    name: "{{- pyth_price_scheduler_docker_image -}}"
+    source: pull
+    pull:
+      platform: amd64
+
+- name: Ensure group "pyth-price-scheduler" exists
+  ansible.builtin.group:
+    name: pyth-price-scheduler
+    state: present
+
+- name: Add the user "pyth-price-scheduler"
+  ansible.builtin.user:
+    name: pyth-price-scheduler
+    comment: Price scheduler
+    groups: pyth-price-scheduler,docker
+
+- name: Copy service file
+  ansible.builtin.template:
+    src: "lib/systemd/system/pyth-price-scheduler.service.j2"
+    dest: "/lib/systemd/system/pyth-price-scheduler.service"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: "Create config directory for the pyth-price-scheduler"
+  ansible.builtin.file:
+    path: "/home/pyth-price-scheduler"
+    state: directory
+    owner: pyth-price-scheduler
+    group: pyth-price-scheduler
+    mode: '0755'
+
+- name: Copy config file
+  ansible.builtin.copy:
+    dest: "home/pyth-price-scheduler/price-config.yaml"
+    content: "{{ pyth_price_scheduler_price_config_content }}"
+    owner: pyth-price-scheduler
+    group: pyth-price-scheduler
+    mode: '0644'
+
+- name: Save mnemonic
+  ansible.builtin.copy:
+    owner: pyth-price-scheduler
+    group: pyth-price-scheduler
+    content: "{{- pyth_price_scheduler_mnemonic -}}"
+    dest: /home/pyth-price-scheduler/mnemonic
+
+# - name: Stop watcher if service if exists
+#   ansible.builtin.service:
+#     name: "pyth-process-watcher"
+#     state: stopped
+#     enabled: true
+#     daemon_reload: true
+#   ignore_errors: true # may be missing at this point
+
+- name: Start and enable systemd service for pyth-price-scheduler
+  ansible.builtin.service:
+    name: "pyth-price-scheduler"
+    state: restarted
+    enabled: true
+    daemon_reload: true
