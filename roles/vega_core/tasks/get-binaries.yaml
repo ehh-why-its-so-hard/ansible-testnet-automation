@@ -11,6 +11,7 @@
     src: *vega_dest
     remote_src: true
     dest: /tmp
+  when: not ansible_check_mode
 
 - name: Copy vega binary
   ansible.builtin.copy:
@@ -20,6 +21,7 @@
     owner: root
     group: root
     mode: '0755'
+  when: not ansible_check_mode
 
 - name: Download visor binary
   ansible.builtin.get_url:
@@ -33,6 +35,7 @@
     src: *visor_dest
     remote_src: true
     dest: /tmp
+  when: not ansible_check_mode
 
 - name: Copy visor binary
   ansible.builtin.copy:
@@ -42,3 +45,4 @@
     owner: root
     group: root
     mode: '0755'
+  when: not ansible_check_mode

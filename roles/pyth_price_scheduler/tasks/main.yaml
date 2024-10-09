@@ -1,0 +1,6 @@
+---
+- name: Process watcher
+  ansible.builtin.import_tasks: process-watcher.yaml
+
+- name: Price pusher
+  ansible.builtin.import_tasks: price-pusher.yaml

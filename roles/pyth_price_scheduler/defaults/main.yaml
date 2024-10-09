@@ -1,0 +1,10 @@
+---
+pyth_price_scheduler_docker_image: public.ecr.aws/pyth-network/xc-price-pusher:v8.0.0
+pyth_price_scheduler_mnemonic: "PUT_PRIVATE_KEY_HERE"
+pyth_price_scheduler_endpoint: "PUT_HERE_RPC_URL"
+pyth_price_scheduler_contract_address: "PUT_HERE_CONTRACT_ADDRESS"
+pyth_price_scheduler_service_endpoint: https://hermes.pyth.network
+pyth_price_scheduler_price_config_content: "PUT_CONFIG_HERE"
+
+pyth_price_scheduler_process_watcher_version: "v0.1.0"
+pyth_price_scheduler_process_watcher_repository: "vegaprotocol/process-watcher"

@@ -11,6 +11,14 @@
       - acl
       - unzip
       - gzip
+      - tar
+      - bzip2
+
+- name: Install Python and pip
+  ansible.builtin.apt:
+    pkg:
+      - python3
+      - python3-pip
 
 - name: Ensure group "vega" exists
   ansible.builtin.group:

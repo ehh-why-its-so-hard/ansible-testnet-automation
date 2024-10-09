@@ -1,0 +1,23 @@
+[commands]
+    # Define the log stream command
+    log-stream = [
+        "/usr/bin/journalctl",
+        "-u", "pyth-price-scheduler",
+        "-n", "1",
+        "-f",
+    ]
+    # Define the command used to stop the service
+    stop = ["/usr/bin/systemctl", "stop", "pyth-price-scheduler"]
+    # Define the command to start the service
+    start = ["/usr/bin/systemctl", "start", "pyth-price-scheduler"]
+
+
+[process-watcher]
+    # Watches if specific docker container is running
+    [process-watcher.docker]
+        enabled = true
+        container-name = "pyth-price-scheduler"
+
+[logs-watcher]
+    # Define the keywords that trigger process restart
+    failure-keywords = ["err", "failed", "throw err", "error"]
