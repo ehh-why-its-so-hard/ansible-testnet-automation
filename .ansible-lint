@@ -4,3 +4,4 @@ mock_modules:
   - community.postgresql.postgresql_db
   - community.postgresql.postgresql_user
   - community.postgresql.postgresql_owner
+  - community.docker.docker_image
