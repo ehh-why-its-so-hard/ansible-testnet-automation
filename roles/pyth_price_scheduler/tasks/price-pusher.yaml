@@ -44,7 +44,7 @@
     content: "{{ pyth_price_scheduler_price_config_content }}"
     owner: pyth-price-scheduler
     group: pyth-price-scheduler
-    mode: '0644'
+    mode: "0644"
 
 - name: Save mnemonic
   ansible.builtin.copy:
@@ -52,6 +52,7 @@
     group: pyth-price-scheduler
     content: "{{- pyth_price_scheduler_mnemonic -}}"
     dest: /home/pyth-price-scheduler/mnemonic
+    mode: "0644"
 
 - name: Start and enable systemd service for pyth-price-scheduler
   ansible.builtin.service:

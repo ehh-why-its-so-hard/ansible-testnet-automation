@@ -1,4 +1,4 @@
-
+---
 - name: Process watcher
   ansible.builtin.import_tasks: process-watcher.yaml
 
