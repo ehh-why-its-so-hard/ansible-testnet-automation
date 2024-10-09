@@ -1,7 +1,7 @@
 ---
 - name: Grafana Agent | Install grafana-agent
   ansible.builtin.apt:
-    deb: "https://github.com/{{- grafana_agent_repository -}}/releases/download/v{{- grafana_agent_version -}}/grafana-agent-{{- grafana_agent_version -}}-1.amd64.deb"
+    deb: "https://github.com/{{- grafana_agent_repository -}}/releases/download/v{{- grafana_agent_version -}}/grafana-agent-{{- grafana_agent_version -}}-1.amd64.deb" # noqa: yaml[line-length]
 
 - name: Grafana Agent | Update CUSTOM_ARGS environment variables for grafana config
   ansible.builtin.lineinfile:
