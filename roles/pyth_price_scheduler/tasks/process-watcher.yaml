@@ -1,7 +1,7 @@
 ---
 - name: Download binary
   ansible.builtin.get_url:
-    url: "https://github.com/{{- pyth_price_scheduler_process_watcher_repository -}}/releases/download/v0.0.1/process-watcher-linux-amd64.zip"
+    url: "https://github.com/{{- pyth_price_scheduler_process_watcher_repository -}}/releases/download/{{- pyth_price_scheduler_process_watcher_version -}}/process-watcher-linux-amd64.zip"
     dest: &watcherdist /tmp/process-watcher.tar.gz
     mode: '0600'
 
