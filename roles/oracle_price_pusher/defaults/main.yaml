@@ -1,0 +1,10 @@
+oracle_price_pusher_repository: nebula-dex/oracle-price-pusher
+oracle_price_pusher_version: v0.0.1
+
+# example config:
+# oracle_price_pusher_configs:
+#   - name: config1
+#     content: "some config content"
+#   - name: config2
+#     content: "another config"
+oracle_price_pusher_configs: []
