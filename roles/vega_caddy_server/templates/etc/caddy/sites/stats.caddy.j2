@@ -1,0 +1,14 @@
+{{- vega_caddy_server_stats_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
+    root * /var/www/stats
+    encode gzip
+
+    file_server {
+        hide .git
+        index index.html
+    }
+
+    handle_errors {
+            rewrite * /index.html
+            file_server
+    }
+}
