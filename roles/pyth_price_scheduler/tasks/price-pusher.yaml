@@ -58,5 +58,6 @@
   ansible.builtin.service:
     name: "pyth-price-scheduler"
     state: restarted
+    no_block: true
     enabled: true
     daemon_reload: true
