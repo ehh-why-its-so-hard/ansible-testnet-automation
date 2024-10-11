@@ -1,0 +1,88 @@
+---
+- name: Ensure group "oracle-price-pusher" exists
+  ansible.builtin.group:
+    name: oracle-price-pusher
+    state: present
+
+- name: Ensure a 'oracle-price-pusher' user exists
+  ansible.builtin.user:
+    name: oracle-price-pusher
+    create_home: true
+    password: ''
+    shell: /bin/bash
+    groups: oracle-price-pusher
+    append: true
+  when: not ansible_check_mode
+
+- name: Update permissions for /home/oracle-price-pusher
+  ansible.builtin.file:
+    path: /home/oracle-price-pusher
+    state: directory
+    owner: oracle-price-pusher
+    group: oracle-price-pusher
+    mode: "0755"
+  when: not ansible_check_mode
+
+- name: "Ensure permissions for {{ item -}}"
+  ansible.builtin.file:
+    path: "{{- item -}}"
+    state: directory
+    mode: "0755"
+    owner: oracle-price-pusher
+    group: oracle-price-pusher
+  with_items:
+    - /home/oracle-price-pusher
+    - /home/oracle-price-pusher/configs
+  when: not ansible_check_mode
+
+- name: Download oracle-price-pusher-linux-amd64 binary
+  ansible.builtin.get_url:
+    force: true
+    url: "https://github.com/{{- oracle_price_pusher_repository -}}/releases/download/{{- oracle_price_pusher_version -}}/oracle-price-pusher-linux-amd64.zip"
+    dest: &pusher_dest /tmp/vega.zip
+    mode: '0600'
+
+- name: Unpack oracle-price-pusher-linux-amd64
+  ansible.builtin.unarchive:
+    src: *pusher_dest
+    remote_src: true
+    dest: /tmp
+  when: not ansible_check_mode
+
+- name: Copy oracle-price-pusher-linux-amd64 binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/oracle-price-pusher-linux-amd64"
+    dest: /usr/local/bin/oracle-price-pusher-linux-amd64
+    owner: root
+    group: root
+    mode: '0755'
+  when: not ansible_check_mode
+
+- name: Copy oracle-price-pusher configs
+  ansible.builtin.copy:
+    remote_src: true
+    dest: "/home/oracle-price-pusher/configs/{{- item.name -}}.toml"
+    content: "{{ item.content }}"
+    owner: oracle-price-pusher
+    group: oracle-price-pusher
+    mode: '0755'
+  when: not ansible_check_mode
+  with_items: "{{ oracle_price_pusher_configs }}"
+
+- name: Install oracle-price-pusher systemd files
+  ansible.builtin.template:
+    src: "lib/systemd/system/oracle-price-pusher.service.j2"
+    dest: "/lib/systemd/system/oracle-price-pusher@.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: not ansible_check_mode
+
+# there is a bug in ansible which does not allow to start the specific instance of service
+- name: Restart all the services for oracle-price-pusher
+  ansible.builtin.systemd_service:
+    name: "oracle-price-pusher@{{- item.name -}}"
+    state: restarted
+  with_items: "{{ oracle_price_pusher_configs }}"
+  become: true

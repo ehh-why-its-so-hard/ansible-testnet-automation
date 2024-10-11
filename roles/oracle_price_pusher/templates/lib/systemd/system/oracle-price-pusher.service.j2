@@ -1,0 +1,19 @@
+[Unit]
+Description=oracle-price-pusher
+Documentation="https://github.com/{{- oracle_price_pusher_repository -}}"
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+User=oracle-price-pusher
+Group=oracle-price-pusher
+ExecStart="/usr/local/bin/oracle-price-pusher-linux-amd64" --config "/home/oracle-price-pusher/configs/%i.toml"
+TimeoutStopSec=10s
+LimitNOFILE=1048576
+LimitNPROC=512
+PrivateTmp=false
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
