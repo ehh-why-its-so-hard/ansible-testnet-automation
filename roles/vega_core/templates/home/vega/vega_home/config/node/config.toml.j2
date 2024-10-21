@@ -40,6 +40,7 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
     GenesisFile = ""
     IP = "localhost"
     Port = 3101
+    SpamProtection = false
     [Blockchain.Null.Replay]
       Record = false
       Replay = false
@@ -86,11 +87,10 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
   Level = "Info"
   RPCEndpoint = "{{ vega_core_primary_evm_endpoint if vega_core_validator_node else '' }}"
   RetryDelay = "15s"
-
 {% if vega_core_secondary_evm_endpoint | default("") != "" %}
   [[Ethereum.EVMBridgeConfigs]]
-    RPCEndpoint = "{{- vega_core_secondary_evm_endpoint -}}"
     ChainID = "{{- vega_core_secondary_evm_chain_id -}}"
+    RPCEndpoint = "{{- vega_core_secondary_evm_endpoint -}}"
 {% endif %}
 
 {% for evm_config in vega_core_evm_chain_configs %}
@@ -105,6 +105,10 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
   LogOrderAmendDebug = false
   LogOrderCancelDebug = false
   KeepCheckpointsMax = 20
+  [Processor.SnapshotDebug]
+    DevEnabled = false
+    CrashAtHeight = 0
+    DebugCrashFile = "/tmp/snapshot.json"
   [Processor.Ratelimit]
     Requests = 500
     PerNBlocks = 10
@@ -162,22 +166,19 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
 [EvtForward]
   Level = "Debug"
   RetryRate = "10s"
-  BlockchainQueueAllowlist = [
-{% if faucet_pubkey|default('') %}
+  KeepHashesDurationForTestOnlyDoNotChange = "48h0m0s"
+  BlockchainQueueAllowlist = [{% if faucet_pubkey|default('') %}
     # faucet
     "{{ faucet_pubkey }}"
-{% endif %}
-  ]
+{% endif %}]
 
   [EvtForward.Ethereum]
     Level = "Debug"
-    PollEventRetryDuration = "20s"
     MaxEthereumBlocks = 10000
+    PollEventRetryDuration = "20s"
+    ChainID = ""
     SkipClientVerification = true
-  [EvtForward.EthCall]
-    Level = "Debug"
-    PollEvery = "20s"
-
+    HeartbeatIntervalForTestOnlyDoNotChange = "1h0m0s"
 
 {% if vega_core_secondary_evm_endpoint | default("") != "" %}
   [[EvtForward.EVMBridges]]
@@ -188,12 +189,19 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
     SkipClientVerification = true
 {% endif %}
 
+  [EvtForward.EthCall]
+    Level = "Debug"
+    PollEvery = "20s"
+    HeartbeatIntervalForTestOnlyDoNotChange = "1h0m0s"
 
 [Genesis]
   Level = "Info"
 
 [Validators]
   Level = "Info"
+  ApproxEthereumBlockTime = "15s"
+  NodeVoteResendInterval = "10s"
+
 
 [Banking]
   Level = "Info"
