@@ -1,7 +1,8 @@
+---
 candles_api_binary_repository: nebula-dex/candles-api
 candles_api_binary_version: v0.0.1
 candles_api_twelvedata_api_key: ""
 candles_api_polygonio_api_key: ""
 candles_api_with_caddy_config: false
-candles_api_caddy_config_destination: /etc/caddy/sites/
+candles_api_caddy_config_destination: /etc/caddy/sites/candles-api.caddy
 candles_api_domains: []
