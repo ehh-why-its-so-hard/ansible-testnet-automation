@@ -1,0 +1,9 @@
+---
+- name: Restart candles-api
+  ansible.builtin.service:
+    state: "restarted"
+    daemon_reload: true
+    enabled: true
+    name: candles-api
+  listen: "Restart candles-api"
+  when: not ansible_check_mode

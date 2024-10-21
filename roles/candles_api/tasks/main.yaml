@@ -1,0 +1,56 @@
+---
+- name: Ensure group "candles-api" exists
+  ansible.builtin.group:
+    name: candles-api
+    state: present
+
+- name: Ensure a 'candles-api' user exists
+  ansible.builtin.user:
+    name: candles-api
+    create_home: true
+    password: ''
+    shell: /bin/bash
+    groups: sudo,candles-api
+    append: true
+
+- name: Download candles-api binary
+  ansible.builtin.get_url:
+    force: true
+    url: "https://github.com/{{- candles_api_binary_repository -}}/releases/download/{{- candles_api_binary_version -}}/candles-api-linux-amd64.zip"
+    dest: &bin_dest /tmp/candles_api.zip
+    mode: '0600'
+
+- name: Unpack candles-api
+  ansible.builtin.unarchive:
+    src: *bin_dest
+    remote_src: true
+    dest: /tmp
+  when: not ansible_check_mode
+
+- name: Copy candles-api binary
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/tmp/candles-api-linux-amd64"
+    dest: /usr/local/bin/candles-api
+    owner: root
+    group: root
+    mode: '0755'
+  when: not ansible_check_mode
+
+- name: Install candles-api systemd files
+  ansible.builtin.template:
+    src: "lib/systemd/system/candles-api.service.j2"
+    dest: "/lib/systemd/system/candles-api.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart candles-api"
+
+- name: Install Caddyfile
+  ansible.builtin.template:
+    src: "etc/caddy/sites/candles-api.caddy.j2"
+    dest: "{{- candles_api_caddy_config_destination -}}"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  notify: "Restart caddy"
