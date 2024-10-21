@@ -1,15 +1,16 @@
 ---
 - name: Restart vegavisor
   ansible.builtin.service:
-    state: "{{ 'started' if vega_core_run_network else 'stopped' }}"
+    state: "restarted"
     daemon_reload: true
+
     name: vegavisor
   listen: "Restart vegavisor"
   when: not ansible_check_mode
 
 - name: Restart blockexplorer
   ansible.builtin.service:
-    state: "{{ 'started' if vega_core_run_network else 'stopped' }}"
+    state: "restarted"
     daemon_reload: true
     name: blockexplorer
   listen: "Restart blockexplorer"

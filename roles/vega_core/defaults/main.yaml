@@ -10,6 +10,7 @@ vega_core_download_binary_version: v0.77.6
 vega_core_with_data_node: false
 vega_core_with_block_explorer: false
 vega_core_validator_node: false
+vega_core_vega_monitoring: false
 vega_core_number_of_snapshots_to_keep: 240
 vega_core_pprof_enabled: false
 vega_core_with_node_init: true
