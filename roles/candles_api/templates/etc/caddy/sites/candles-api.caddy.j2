@@ -1,4 +1,5 @@
 {{- candles_api_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
     reverse_proxy http://localhost:8889    
+    import cors *
 }
 
