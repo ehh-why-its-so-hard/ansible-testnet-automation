@@ -1,6 +1,6 @@
+GatewayEnabled = true
 AutoInitialiseFromNetworkHistory = false
 ChainID = "{{- vega_core_chain_id -}}"
-GatewayEnabled = true
 MaxMemoryPercent = 33
 
 [Admin]
@@ -71,9 +71,9 @@ MaxMemoryPercent = 33
   [SQLStore.ConnectionConfig]
     Host = "localhost"
     Port = 5432
-    Username = "{{- vega_core_data_node_postgresql_username -}}"
-    Password = "{{- vega_core_data_node_postgresql_password -}}"
-    Database = "{{- vega_core_data_node_postgresql_database -}}"
+    Username = "{{- vega_core_data_node_settings['SQLStore.ConnectionConfig.Username']|default('vega') -}}"
+    Password = "{{- vega_core_data_node_settings['SQLStore.ConnectionConfig.Password']|default('vega') -}}"
+    Database = "{{- vega_core_data_node_settings['SQLStore.ConnectionConfig.Database']|default('vega') -}}"
     SocketDir = "/tmp"
     MaxConnLifetime = "30m0s"
     MaxConnLifetimeJitter = "5m0s"
@@ -91,8 +91,8 @@ MaxMemoryPercent = 33
     MaxSize = 100
     MaxAge = 2
 
-{% if vega_core_data_node_with_monitoring_optimized_retention %}
 
+{% if vega_core_data_node_with_monitoring_optimized_retention %}
   [[SQLStore.RetentionPolicies]]
     HypertableOrCaggName = "balances"
     DataRetentionPeriod = "7 days"
@@ -110,7 +110,7 @@ MaxMemoryPercent = 33
     DataRetentionPeriod = "45 days"
   [[SQLStore.RetentionPolicies]]
     HypertableOrCaggName = "orders"
-    DataRetentionPeriod = "45 days"
+    DataRetentionPeriod = "2 days"
   [[SQLStore.RetentionPolicies]]
     HypertableOrCaggName = "trades"
     DataRetentionPeriod = "45 days"
@@ -252,6 +252,12 @@ MaxMemoryPercent = 33
   [[SQLStore.RetentionPolicies]]
     HypertableOrCaggName = "volume_rebate_stats"
     DataRetentionPeriod = "45 days"
+{% elif vega_core_data_node_sql_retention_policies|length > 0 %}
+{% for table, period in vega_core_data_node_sql_retention_policies.items() %}
+  [[SQLStore.RetentionPolicies]]
+    HypertableOrCaggName = "{{- table -}}"
+    DataRetentionPeriod = "{{- period -}}"
+{% endfor %}
 {% endif %}
 
 [Gateway]
@@ -333,13 +339,13 @@ MaxMemoryPercent = 33
   Level = "Info"
   Enabled = true
   WipeOnStartup = false
-  Publish = true
+  Publish = {{ vega_core_data_node_settings['NetworkHistory.Publish']|default(true)|lower }}
   FetchRetryMax = 10
   RetryTimeout = "50s"
   [NetworkHistory.Store]
     PeerID = "XXXXXXXXXXXXXXXXXXXXX"
     PrivKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    BootstrapPeers = [{%- for peer in vega_core_data_node_bootstrap_peers -%}
+    BootstrapPeers = [{%- for peer in vega_core_data_node_settings['NetworkHistory.Store.BootstrapPeers']|default([]) -%}
 "{{- peer -}}"
 {%- if not loop.last %},{% endif -%}
 {%- endfor -%}]

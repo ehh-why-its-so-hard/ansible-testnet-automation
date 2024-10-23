@@ -62,7 +62,7 @@
         src: "/tmp/vega-monitoring-{{ os }}-{{ arch }}.zip"
         dest: "{{ vega_monitoring_home }}"
         copy: false
-      ignore_errors: "{{ ansible_check_mode }}"
+      when: not ansible_check_mode
 
     - name: Vega-Monitoring | Validate vega-monitoring version
       ansible.builtin.command: "{{ vega_monitoring_home }}/vega-monitoring version"
