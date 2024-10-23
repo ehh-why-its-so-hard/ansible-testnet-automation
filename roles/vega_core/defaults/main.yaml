@@ -47,7 +47,7 @@ vega_core_evm_chain_configs:
 
 vega_core_data_node_with_monitoring_optimized_retention: false
 # Example
-# vega_core_data_node_sql_retention_policies: 
+# vega_core_data_node_sql_retention_policies:
 #   orders: 2 days
 #   market_data: 14 days
 vega_core_data_node_sql_retention_policies: {}
