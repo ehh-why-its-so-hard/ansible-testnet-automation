@@ -1,0 +1,16 @@
+---
+- name: Download health-check binary
+  ansible.builtin.get_url:
+    force: true
+    url: "https://github.com/{{- vega_core_health_check_repository -}}/releases/download/{{- vega_core_health_check_version -}}/vega-health-check-linux-amd64"
+    dest: /usr/local/bin/vega-health-check
+    mode: '0755'
+
+- name: Install health-check systemd
+  ansible.builtin.template:
+    src: "lib/systemd/system/vega-health-check.service.j2"
+    dest: "/lib/systemd/system/vega-health-check.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart vega-health-check"

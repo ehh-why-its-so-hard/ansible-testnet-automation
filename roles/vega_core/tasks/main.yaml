@@ -26,4 +26,8 @@
   when: vega_core_with_unsafe_reset_all
 
 - name: Restart network
-  ansible.builtin.import_tasks: restart_network.yaml
+  ansible.builtin.import_tasks: restart-network.yaml
+
+- name: Health-check setup
+  ansible.builtin.import_tasks: health-check.yaml
+  when: vega_core_with_health_check
