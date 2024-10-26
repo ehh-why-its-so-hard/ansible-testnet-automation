@@ -1,0 +1,23 @@
+[Unit]
+Description=healthcheck
+Documentation=https://github.com/vegaprotocol/ansible
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+User=vega
+Group=vega
+{% if vega_core_with_block_explorer | default(false) %}
+ExecStart=/usr/local/bin/vega-health-check blockexplorer --blockexplorer-api-url "http://localhost:1515" --core-url "http://localhost:3003" --http-port 8080
+{% elif vega_core_with_data_node | default(false) %}
+ExecStart=/usr/local/bin/vega-health-check data-node --api-url "http://localhost:3008" --core-url "http://localhost:3003" --http-port 8080
+{% else %}
+ExecStart=/usr/local/bin/vega-health-check vega --core-url "http://localhost:3003" --http-port 8080
+{% endif %}
+TimeoutStopSec=10s
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CPUQuota=10%
+
+[Install]
+WantedBy=multi-user.target
