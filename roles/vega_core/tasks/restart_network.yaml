@@ -9,7 +9,7 @@
     mode: "0644"
   register: visor_state
   notify:
-    - "Start vegavisor"
+    - "Restart vegavisor"
 
 - name: Decide whether restart explorer(when the vega_core_run_network flag changed)
   ansible.builtin.copy:
