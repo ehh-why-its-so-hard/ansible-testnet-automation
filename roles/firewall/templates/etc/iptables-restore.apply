@@ -9,7 +9,7 @@
 -A INPUT -p udp -m udp --dport 53 -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 -A INPUT -p tcp -j VEGATCP
--A INPUT -p tcp -j VEGAUDP
+-A INPUT -p udp -j VEGAUDP
 
 {% for port in firewall_open_tcp %}
 -A VEGATCP -p tcp -m tcp --dport {{ port|int }} -j ACCEPT
