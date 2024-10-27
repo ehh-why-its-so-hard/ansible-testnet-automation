@@ -1,0 +1,21 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:VEGATCP - [0:0]
+:VEGAUDP - [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p udp -m udp --dport 53 -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp -j VEGATCP
+-A INPUT -p tcp -j VEGAUDP
+
+{% for port in firewall_open_tcp %}
+-A VEGATCP -p tcp -m tcp --dport {{ port|int }} -j ACCEPT
+{% endfor %}
+
+{% for port in firewall_open_udp %}
+-A VEGAUDP -p udp -m udp --dport {{ port|int }} -j ACCEPT
+{% endfor %}
+COMMIT
