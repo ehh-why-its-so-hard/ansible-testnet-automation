@@ -1,0 +1,36 @@
+---
+# How it works?
+# OUTPUT: allowed everywhere
+# INPUT: blocked all except 22 and specific ports
+
+- name: Uninstall unsupported firewalls
+  ansible.builtin.apt:
+    pkg:
+      - ufw
+      - firewalld
+    state: absent
+
+- name: Install iptables
+  ansible.builtin.apt:
+    pkg:
+      - iptables
+      - iptables-persistent
+    state: present
+
+- name: Template restore file
+  ansible.builtin.template:
+    src: "etc/iptables-restore.apply"
+    dest: "/etc/iptables-restore.apply"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  register: iptables_restore_file
+
+- name: Restore firewall state from a file
+  community.general.iptables_state:
+    state: restored
+    path: /etc/iptables-restore.apply
+    noflush: false
+  async: "{{ ansible_timeout }}"
+  poll: 0
+  when: iptables_restore_file.changed # noqa: no-handler

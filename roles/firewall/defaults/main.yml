@@ -1,0 +1,3 @@
+---
+firewall_open_tcp: []
+firewall_open_udp: []
