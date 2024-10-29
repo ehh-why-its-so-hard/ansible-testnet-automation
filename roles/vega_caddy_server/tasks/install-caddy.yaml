@@ -39,14 +39,23 @@
 - name: CaddyserverV2 | Install xcaddy
   ansible.builtin.apt:
     deb: "https://github.com/caddyserver/xcaddy/releases/download/v{{ vega_caddy_server_xcaddy_version }}/xcaddy_{{ vega_caddy_server_xcaddy_version }}_linux_amd64.deb" # noqa: yaml[line-length]
+    update_cache: true
+    state: present
+
+- name: Check if caddy is installed
+  ansible.builtin.command: "caddy version"
+  register: caddy_version
+  changed_when: false
+  failed_when: go_installed_version.rc != 0 and go_installed_version.rc != 127 and go_installed_version.rc != 2
+  check_mode: false
 
 - name: CaddyserverV2 | Compile caddy from sources
   ansible.builtin.command: |
     xcaddy build {{ vega_caddy_server_caddy_version }} \
       --output /usr/bin/caddy
       --with github.com/caddyserver/replace-response
-  args:
-    creates: /usr/bin/caddy
+  when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
+  changed_when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   notify: "Restart caddy"
 
 - name: Config | Install caddy systemd files

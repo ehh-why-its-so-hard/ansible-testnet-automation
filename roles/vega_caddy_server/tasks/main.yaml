@@ -71,3 +71,33 @@
     mode: "0644"
   when: vega_caddy_server_with_stats and vega_caddy_server_stats_domains | length > 0
   notify: "Restart caddy"
+
+- name: Enable stats config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/stats.caddy.j2"
+    dest: "/etc/caddy/sites/stats.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_stats and vega_caddy_server_stats_domains | length > 0
+  notify: "Restart caddy"
+
+- name: Enable api LB config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/api-lb.caddy.j2"
+    dest: "/etc/caddy/sites/api-lb.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_api_lb and vega_caddy_server_api_lb_domains | length > 0
+  notify: "Restart caddy"
+
+- name: Enable block-explorer LB config
+  ansible.builtin.template:
+    src: "etc/caddy/sites/block-explorer-lb.caddy.j2"
+    dest: "/etc/caddy/sites/block-explorer-lb.caddy"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  when: vega_caddy_server_with_block_explorer_lb and vega_caddy_server_block_explorer_lb_domains | length > 0
+  notify: "Restart caddy"

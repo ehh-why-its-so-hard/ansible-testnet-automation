@@ -1,0 +1,59 @@
+{{- vega_caddy_server_block_explorer_lb_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
+    reverse_proxy {
+{% for upstream in vega_caddy_server_block_explorer_lb_upstreams %}
+        to {{ upstream }}
+{% endfor %}
+
+        header_up Host {upstream_hostport}
+        header_down X-LB-Upstream {upstream_hostport}
+
+        lb_policy cookie 26403ec6d537fa31f63e294b44831734 {
+            fallback random_choose 2
+        }
+        
+        # how many times to retry selecting available backends for each request if the next available 
+        # host is down. By default, retries are disabled (zero).
+        lb_retries 0
+
+        # a duration value that defines how long to wait between selecting the next host from the pool. 
+        # Default is 250ms. Only relevant when a request to an upstream host fails. Be aware that setting
+        # this to 0 with a non-zero lb_try_duration can cause the CPU to spin if all backends are down 
+        # and latency is very low.
+        lb_try_interval 100ms
+
+        # the port to use for active health checks, if different from the upstream's port.
+        health_port 443
+
+        # the URI path (and optional query) for active health checks.
+        health_uri /health-check
+
+        # a duration value that defines how often to perform active health checks. Default: 30s.
+        health_interval 3s
+
+        # the number of consecutive health checks required before marking the backend as healthy again. 
+        # Default: 1.
+        health_passes 1
+
+        # the number of consecutive health checks required before marking the backend as unhealthy. 
+        # Default: 1.
+        health_fails 2
+
+        # will cause the health check to follow redirects provided by upstream. By default, a redirect response
+        # would cause the health check to count as a fail.
+        health_follow_redirects
+
+        # a duration value that defines how long to wait for a reply before marking the backend as down. 
+        # Default: 5s.
+        health_timeout 1s
+
+        # the HTTP status code to expect from a healthy backend. Can be a 3-digit status code, or a 
+        # status code class ending in xx. For example: 200 (which is the default), or 2xx.
+        health_status 2xx
+
+        # duration value that defines how long to remember a failed request. A duration > 0 enables
+        # passive health checking; the default is 0 (off). A reasonable starting point might be 30s
+        # to balance error rates with responsiveness when bringing an unhealthy upstream back online;
+        # but feel free to experiment to find the right balance for your usecase.
+        fail_duration 30s # probably it needs to be higher because 30s may be not enough for vega to startup and there is no point to check it again
+    }
+}
