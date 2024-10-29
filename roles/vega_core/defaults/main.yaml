@@ -60,4 +60,4 @@ vega_core_data_node_settings: {}
 
 vega_core_with_health_check: true
 vega_core_health_check_repository: "nebula-dex/vega-health-check"
-vega_core_health_check_version: "v0.1.0"
+vega_core_health_check_version: "v0.2.0"
