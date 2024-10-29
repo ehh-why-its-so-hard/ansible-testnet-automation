@@ -2,8 +2,8 @@
 vega_caddy_server_caddyfile_file_name: ""
 vega_caddy_server_node_home: "/home/vega"
 
-vega_caddy_server_xcaddy_version: 0.3.2
-vega_caddy_server_caddy_version: v2.7.5
+vega_caddy_server_xcaddy_version: 0.4.2
+vega_caddy_server_caddy_version: v2.8.4
 
 vega_caddy_server_node_id: unknown
 
@@ -20,3 +20,11 @@ vega_caddy_server_block_explorer_ui_domains: []
 vega_caddy_server_governance_ui_domains: []
 vega_caddy_server_trading_ui_domains: []
 vega_caddy_server_stats_domains: []
+
+vega_caddy_server_with_api_lb: false
+vega_caddy_server_api_lb_domains: []
+vega_caddy_server_api_lb_upstreams: []
+
+vega_caddy_server_with_block_explorer_lb: false
+vega_caddy_server_block_explorer_lb_domains: []
+vega_caddy_server_block_explorer_lb_upstreams: []
