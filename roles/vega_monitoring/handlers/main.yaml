@@ -9,6 +9,8 @@
   ansible.builtin.systemd:
     name: vega-monitoring
     state: restarted
+    daemon_reload: true
+    enabled: true
   become: true
   listen: "Restart vega-monitoring"
   when: not ansible_check_mode

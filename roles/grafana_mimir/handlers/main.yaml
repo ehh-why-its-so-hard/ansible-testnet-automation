@@ -3,6 +3,7 @@
   ansible.builtin.systemd:
     name: grafana-mimir@{{ grafana_mimir_instance_id }}
     daemon_reload: true
+    enabled: true
     state: restarted
   become: true
   listen: "Restart grafana-mimir@{{ grafana_mimir_instance_id }}"

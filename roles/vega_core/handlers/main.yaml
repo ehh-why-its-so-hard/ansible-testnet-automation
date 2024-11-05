@@ -3,6 +3,7 @@
   ansible.builtin.service:
     state: "{{- 'restarted' if vega_core_run_network else 'stopped' -}}"
     daemon_reload: true
+    enabled: true
     name: vegavisor
   listen: "Restart vegavisor"
   when: not ansible_check_mode
@@ -11,6 +12,7 @@
   ansible.builtin.service:
     state: "{{- 'restarted' if vega_core_run_network else 'stopped' -}}"
     daemon_reload: true
+    enabled: true
     name: blockexplorer
   listen: "Restart blockexplorer"
   when: not ansible_check_mode
@@ -19,6 +21,7 @@
   ansible.builtin.service:
     state: "{{- 'restarted' if vega_core_run_network else 'stopped' -}}"
     daemon_reload: true
+    enabled: true
     name: vega-health-check
   listen: "Restart vega-health-check"
   when: not ansible_check_mode

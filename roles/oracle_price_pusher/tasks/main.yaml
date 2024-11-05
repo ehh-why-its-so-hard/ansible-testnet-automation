@@ -84,5 +84,7 @@
   ansible.builtin.systemd_service:
     name: "oracle-price-pusher@{{- item.name -}}"
     state: restarted
+    daemon_reload: true
+    enabled: true
   with_items: "{{ oracle_price_pusher_configs }}"
   become: true
