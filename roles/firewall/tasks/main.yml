@@ -19,18 +19,17 @@
 
 - name: Template restore file
   ansible.builtin.template:
-    src: "etc/iptables-restore.apply"
-    dest: "/etc/iptables-restore.apply"
+    src: "etc/iptables/rules.v4"
+    # https://www.thomas-krenn.com/en/wiki/Saving_Iptables_Firewall_Rules_Permanently
+    dest: "/etc/iptables/rules.v4"
     owner: "root"
     group: "root"
     mode: "0644"
-  register: iptables_restore_file
 
 - name: Restore firewall state from a file
   community.general.iptables_state:
     state: restored
-    path: /etc/iptables-restore.apply
+    path: /etc/iptables/rules.v4
     noflush: false
   async: "{{ ansible_timeout }}"
   poll: 0
-  when: iptables_restore_file.changed # noqa: no-handler
