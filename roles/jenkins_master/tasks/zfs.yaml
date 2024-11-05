@@ -1,0 +1,41 @@
+---
+- name: Create pool
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    zpool create -f -o ashift=12 "jenkins_pool" "{{- jenkins_master_zfs_device -}}";
+    zfs set atime=off "jenkins_pool";
+    zfs set compression=zstd "jenkins_pool";
+    # enable improved extended attributes - keep in inode instead of dir;
+    zfs set xattr=sa "jenkins_pool";
+    # reduce amount of metadata (may improve random writes);
+    zfs set redundant_metadata=most "jenkins_pool";
+
+    touch "/.zfs_pool"
+  args:
+    executable: /bin/bash
+    creates: "/.zfs_pool"
+
+- name: Create dataset
+  ansible.builtin.shell: |
+    set -o pipefail
+
+    mkdir -p "{{- item.mount_point -}}";
+    zfs create "{{- item.dataset_name -}}";
+    zfs set atime=off "{{- item.dataset_name -}}";
+    zfs set compression=zstd "{{- item.dataset_name -}}";
+    # enable improved extended attributes - keep in inode instead of dir;
+    zfs set xattr=sa "{{- item.dataset_name -}}";
+    # reduce amount of metadata (may improve random writes);
+    zfs set redundant_metadata=most "{{- item.dataset_name -}}";
+    zfs set mountpoint="{{- item.mount_point -}}" "{{- item.dataset_name -}}";
+
+    touch "{{- item.mount_point -}}/.zfs_pool"
+  args:
+    executable: /bin/bash
+    creates: "{{- item.mount_point -}}/.zfs_pool"
+  with_items:
+    - dataset_name: "jenkins_pool/home"
+      mount_point: "/home/jenkins"
+    - dataset_name: "jenkins_pool/home/jobs"
+      mount_point: "jenkins_pool/home/jobs"

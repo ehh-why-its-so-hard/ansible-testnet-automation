@@ -1,0 +1,69 @@
+---
+- name: Setup ZFS
+  ansible.builtin.import_tasks: zfs.yaml
+  when: jenkins_master_with_zfs
+
+- name: Ensure jenkins home exists
+  ansible.builtin.file:
+    path: "{{- item -}}"
+    state: directory
+    mode: '0755'
+    owner: jenkins
+    group: jenkins
+  with_items:
+    - /home/jenkins
+    - /home/jenkins/jobs
+
+- name: Add an Apt signing key for Jenkins apt repo
+  ansible.builtin.apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    state: present
+
+- name: Add Jenkins apt repo into sources list
+  ansible.builtin.apt_repository:
+    repo: deb https://pkg.jenkins.io/debian-stable binary/
+    state: present
+    update_cache: "yes"
+    filename: jenkins
+
+- name: Install Required packages
+  ansible.builtin.apt:
+    name:
+      - openjdk-17-jdk
+
+- name: Install Jenkins
+  ansible.builtin.apt:
+    name:
+      - "jenkins={{ jenkins_master_version }}"
+  notify:
+    - "Reload systemd config"
+    - "Restart jenkins"
+
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /etc/systemd/system/jenkins.service.d/
+    state: directory
+    mode: '0755'
+
+
+- name: Copy jenkins.service.d config
+  ansible.builtin.copy:
+    src: 'etc/systemd/system/jenkins.service.d/override.conf'
+    dest: '/etc/systemd/system/jenkins.service.d/override.conf'
+    owner: 'root'
+    group: 'root'
+    mode: "0644"
+  notify:
+    - "Reload systemd config"
+    - "Restart jenkins"
+
+- name: Restart jenkins periodically
+  become: true
+  ansible.builtin.cron:
+    name: "restart jenkins"
+    minute: "0"
+    hour: "5" # 5AM UTC
+    weekday: "1" # monday
+    user: root
+    job: "/usr/bin/systemctl restart jenkins.service"

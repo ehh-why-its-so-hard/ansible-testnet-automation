@@ -1,0 +1,5 @@
+---
+- name: Install Required packages
+  ansible.builtin.apt:
+    name:
+      - openjdk-17-jdk
