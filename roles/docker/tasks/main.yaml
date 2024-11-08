@@ -7,6 +7,10 @@
       - ca-certificates
       - curl
       - software-properties-common
+  retries: 3
+  delay: 3
+  register: docker_apt_common_result
+  until: docker_apt_common_result is succeeded
 
 - name: Add apt key for required repositories
   ansible.builtin.apt_key:
@@ -32,6 +36,10 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
+  retries: 3
+  delay: 3
+  register: docker_apt_result
+  until: docker_apt_result is succeeded
 
 - name: Restart docker
   ansible.builtin.systemd:

@@ -35,3 +35,7 @@
       - "timescaledb-2-loader-postgresql-{{ vega_postgresql_version }}={{- vega_postgresql_timescaledb_version -}}*"
   notify:
     - "Restart postgresql"
+  retries: 3
+  delay: 3
+  register: vega_psql_timescaledb_install
+  until: vega_psql_timescaledb_install is succeeded

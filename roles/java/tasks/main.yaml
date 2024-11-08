@@ -3,3 +3,7 @@
   ansible.builtin.apt:
     name:
       - openjdk-17-jdk
+  retries: 3
+  delay: 3
+  register: java_install_result
+  until: java_install_result is succeeded

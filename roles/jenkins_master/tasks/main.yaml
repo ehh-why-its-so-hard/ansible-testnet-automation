@@ -30,6 +30,10 @@
   ansible.builtin.apt:
     name:
       - openjdk-17-jdk
+  retries: 3
+  delay: 3
+  register: jenkins_java_install_result
+  until: jenkins_java_install_result is succeeded
 
 - name: Install Jenkins
   ansible.builtin.apt:
@@ -38,6 +42,10 @@
   notify:
     - "Reload systemd config"
     - "Restart jenkins"
+  retries: 3
+  delay: 3
+  register: jenkins_install_result
+  until: jenkins_install_result is succeeded
 
 
 - name: Create a directory if it does not exist
@@ -48,7 +56,7 @@
 
 
 - name: Copy jenkins.service.d config
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: 'etc/systemd/system/jenkins.service.d/override.conf'
     dest: '/etc/systemd/system/jenkins.service.d/override.conf'
     owner: 'root'

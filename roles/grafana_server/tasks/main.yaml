@@ -15,6 +15,9 @@
         allow_downgrade: true
         allow_change_held_packages: true
       register: grafana_server_install
+      retries: 3
+      delay: 3
+      until: grafana_server_install is succeeded
 
     - name: Ensure grafana plugins dir exists
       ansible.builtin.file:

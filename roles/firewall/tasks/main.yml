@@ -9,6 +9,10 @@
       - ufw
       - firewalld
     state: absent
+  retries: 3
+  delay: 3
+  register: firewall_remove_apt_result
+  until: firewall_remove_apt_result is succeeded
 
 - name: Install iptables
   ansible.builtin.apt:
@@ -16,6 +20,10 @@
       - iptables
       - iptables-persistent
     state: present
+  retries: 3
+  delay: 3
+  register: firewall_apt_result
+  until: firewall_apt_result is succeeded
 
 - name: Template restore file
   ansible.builtin.template:
