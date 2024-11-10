@@ -86,14 +86,6 @@
         group: vega
         mode: '0755'
 
-    - name: Visor config
-      ansible.builtin.template:
-        src: "home/vega/vegavisor_home/config.toml.j2"
-        dest: "/home/vega/vegavisor_home/config.toml"
-        owner: "vega"
-        group: "vega"
-        mode: "0664"
-
     - name: Visor genesis config
       ansible.builtin.template:
         src: "home/vega/vegavisor_home/genesis/run-config.toml.j2"
@@ -118,6 +110,15 @@
         owner: root
         group: root
         mode: '0755'
+
+
+- name: Render visor config
+  ansible.builtin.template:
+    src: "home/vega/vegavisor_home/config.toml.j2"
+    dest: "/home/vega/vegavisor_home/config.toml"
+    owner: "vega"
+    group: "vega"
+    mode: "0664"
 
 
 - name: Data node config(template only)
