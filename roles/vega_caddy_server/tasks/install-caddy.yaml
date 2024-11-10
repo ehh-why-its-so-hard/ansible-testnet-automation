@@ -60,8 +60,9 @@
 - name: CaddyserverV2 | Compile caddy from sources
   ansible.builtin.command: |
     xcaddy build {{ vega_caddy_server_caddy_version }} \
-      --output /usr/bin/caddy
-      --with github.com/caddyserver/replace-response
+      --output /usr/bin/caddy \
+      --with github.com/caddyserver/replace-response \
+      --with github.com/shift72/caddy
   when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   changed_when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   notify: "Restart caddy"
