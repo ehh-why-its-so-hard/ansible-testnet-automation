@@ -97,8 +97,8 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
   [[Ethereum.EVMChainConfigs]]
     ChainID = "{{- evm_config.chain_id -}}"
     RPCEndpoint = "{{- evm_config.endpoint -}}"
-{% endfor %}
 
+{% endfor %}
 [Processor]
   Level = "Info"
   LogOrderSubmitDebug = true
@@ -109,9 +109,6 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
     DevEnabled = false
     CrashAtHeight = 0
     DebugCrashFile = "/tmp/snapshot.json"
-  [Processor.Ratelimit]
-    Requests = 500
-    PerNBlocks = 10
 
 [Logging]
   Environment = "dev"
@@ -167,11 +164,7 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
   Level = "Debug"
   RetryRate = "10s"
   KeepHashesDurationForTestOnlyDoNotChange = "48h0m0s"
-  BlockchainQueueAllowlist = [{% if faucet_pubkey|default('') %}
-    # faucet
-    "{{ faucet_pubkey }}"
-{% endif %}]
-
+  BlockchainQueueAllowlist = []
   [EvtForward.Ethereum]
     Level = "Debug"
     MaxEthereumBlocks = 10000
@@ -179,7 +172,6 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
     ChainID = ""
     SkipClientVerification = true
     HeartbeatIntervalForTestOnlyDoNotChange = "1h0m0s"
-
 {% if vega_core_secondary_evm_endpoint | default("") != "" %}
   [[EvtForward.EVMBridges]]
     Level = "Info"
@@ -188,7 +180,6 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
     ChainID = "{{- vega_core_secondary_evm_chain_id -}}"
     SkipClientVerification = true
 {% endif %}
-
   [EvtForward.EthCall]
     Level = "Debug"
     PollEvery = "20s"
@@ -201,7 +192,6 @@ MaxMemoryPercent = {{ 90 if vega_core_validator_node else 33 }}
   Level = "Info"
   ApproxEthereumBlockTime = "15s"
   NodeVoteResendInterval = "10s"
-
 
 [Banking]
   Level = "Info"
