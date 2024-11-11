@@ -7,6 +7,10 @@
       - debian-archive-keyring
       - apt-transport-https
       - curl
+  retries: 3
+  delay: 3
+  register: vega_caddy_server_common_install
+  until: vega_caddy_server_common_install is succeeded
 
 - name: CaddyserverV2 | Check if Go installed
   ansible.builtin.command: "go version"
@@ -41,6 +45,10 @@
     deb: "https://github.com/caddyserver/xcaddy/releases/download/v{{ vega_caddy_server_xcaddy_version }}/xcaddy_{{ vega_caddy_server_xcaddy_version }}_linux_amd64.deb" # noqa: yaml[line-length]
     update_cache: true
     state: present
+  retries: 3
+  delay: 3
+  register: vega_caddy_server_xcaddy_install
+  until: vega_caddy_server_xcaddy_install is succeeded
 
 - name: Check if caddy is installed
   ansible.builtin.command: "caddy version"
@@ -52,8 +60,9 @@
 - name: CaddyserverV2 | Compile caddy from sources
   ansible.builtin.command: |
     xcaddy build {{ vega_caddy_server_caddy_version }} \
-      --output /usr/bin/caddy
-      --with github.com/caddyserver/replace-response
+      --output /usr/bin/caddy \
+      --with github.com/caddyserver/replace-response \
+      --with github.com/shift72/caddy
   when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   changed_when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   notify: "Restart caddy"

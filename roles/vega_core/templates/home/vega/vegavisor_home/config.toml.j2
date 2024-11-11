@@ -10,7 +10,7 @@ stopSignalTimeoutSeconds = 15
 
 [autoInstall]
   enabled = true
-  repositoryOwner = "vegaprotocol"
+  repositoryOwner = "{{- vega_core_vegavisor_config['autoInstall.repositoryOwner']|default('vegaprotocol') -}}"
   repository = "vega"
   [autoInstall.asset]
     name = "vega-linux-amd64.zip"

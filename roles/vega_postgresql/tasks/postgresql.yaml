@@ -4,6 +4,10 @@
     update_cache: true
     pkg:
       - python3-psycopg2
+  retries: 3
+  delay: 3
+  register: vega_psql_common_install
+  until: vega_psql_common_install is succeeded
 
 # https://wiki.postgresql.org/wiki/Apt
 # https://stackoverflow.com/questions/71585303/how-can-i-manage-keyring-files-in-trusted-gpg-d-with-ansible-playbook-since-apt
@@ -25,3 +29,7 @@
     pkg:
       - "postgresql-{{- vega_postgresql_version -}}"
       - "postgresql-contrib-{{- vega_postgresql_version -}}"
+  retries: 3
+  delay: 3
+  register: vega_psql_install
+  until: vega_psql_install is succeeded

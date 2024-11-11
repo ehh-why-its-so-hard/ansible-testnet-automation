@@ -13,12 +13,20 @@
       - gzip
       - tar
       - bzip2
+  retries: 3
+  delay: 3
+  register: vega_common_install
+  until: vega_common_install is succeeded
 
 - name: Install Python and pip
   ansible.builtin.apt:
     pkg:
       - python3
       - python3-pip
+  retries: 3
+  delay: 3
+  register: vega_common_python_install
+  until: vega_common_python_install is succeeded
 
 - name: Ensure group "vega" exists
   ansible.builtin.group:

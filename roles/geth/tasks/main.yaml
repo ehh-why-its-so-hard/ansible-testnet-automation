@@ -4,12 +4,20 @@
     pkg:
       - tar
       - gzip
+  retries: 3
+  delay: 3
+  register: geth_apt_result
+  until: geth_apt_result is succeeded
 
 - name: Download geth binary
   ansible.builtin.get_url:
     url: "https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-{{- geth_version -}}.tar.gz"
     dest: &geth_dest /tmp/geth.zip
     mode: '0600'
+  retries: 3
+  delay: 3
+  register: geth_download_result
+  until: geth_download_result is succeeded
 
 - name: Unpack geth
   ansible.builtin.unarchive:

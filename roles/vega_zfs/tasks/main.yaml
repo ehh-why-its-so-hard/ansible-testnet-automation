@@ -4,6 +4,10 @@
   ansible.builtin.apt:
     pkg:
       - zfsutils-linux
+  retries: 3
+  delay: 3
+  register: vega_zfs_install
+  until: vega_zfs_install is succeeded
 
 - name: Ensure mountpoint exists
   when: vega_zfs_device != ""

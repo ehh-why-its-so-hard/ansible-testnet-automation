@@ -3,3 +3,4 @@ jenkins_master_version: '2.452.4'
 
 jenkins_master_with_zfs: false
 jenkins_master_zfs_device: /dev/sdb
+jenkins_master_permissive_script_security: false

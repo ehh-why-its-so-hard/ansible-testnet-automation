@@ -6,11 +6,12 @@ vega_core_with_unsafe_reset_all: false
 vega_core_chain_id: ""
 vega_core_external_endpoint: ""
 # vega version used only once for genesis version in the vegavisor and for the maintenance stuff (/usr/local/bin/vega)
+vega_core_download_repository: vegaprotocol
 vega_core_download_binary_version: v0.77.6
 vega_core_with_data_node: false
 vega_core_with_block_explorer: false
 vega_core_validator_node: false
-vega_core_vega_monitoring: false
+vega_core_with_vega_monitoring: false
 vega_core_number_of_snapshots_to_keep: 240
 vega_core_pprof_enabled: false
 vega_core_with_node_init: true
@@ -61,3 +62,5 @@ vega_core_data_node_settings: {}
 vega_core_with_health_check: true
 vega_core_health_check_repository: "nebula-dex/vega-health-check"
 vega_core_health_check_version: "v0.2.0"
+
+vega_core_vegavisor_config: {}

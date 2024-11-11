@@ -4,3 +4,8 @@
     url: "https://github.com/TomWright/dasel/releases/download/v{{- vega_common_dasel_version -}}/dasel_linux_amd64"
     dest: /usr/local/bin/dasel
     mode: '0755'
+    timeout: 30
+  retries: 3
+  delay: 3
+  register: dasel_result
+  until: dasel_result is succeeded
