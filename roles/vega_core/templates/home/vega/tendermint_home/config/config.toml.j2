@@ -270,7 +270,7 @@ seed_mode = false
 private_peer_ids = ""
 
 # Toggle to disable guard against peers connecting from the same ip.
-allow_duplicate_ip = false
+allow_duplicate_ip = {{ vega_core_tendermint_settings['p2p.allow_duplicate_ip']|default(false)|lower }}
 
 # Peer connection configuration.
 handshake_timeout = "20s"
@@ -354,7 +354,7 @@ enable = false
 # For Cosmos SDK-based chains, trust_period should usually be about 2/3 of the unbonding time (~2
 # weeks) during which they can be financially punished (slashed) for misbehavior.
 # TODO: configure ansible to check healthines of all_persistent_peers and add here only two healhy nodes
-rpc_servers = ""
+rpc_servers = "{{ vega_core_tendermint_settings['statesync.rpc_servers']|default("")|lower }}"
 trust_height = 0
 trust_hash = ""
 # 1 month of trust
