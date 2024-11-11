@@ -58,6 +58,7 @@ vega_core_block_explorer_postgresql_database: "tendermint"
 vega_core_block_explorer_postgresql_password: "tendermint"
 
 vega_core_data_node_settings: {}
+vega_core_tendermint_settings: {}
 
 vega_core_with_health_check: true
 vega_core_health_check_repository: "nebula-dex/vega-health-check"
