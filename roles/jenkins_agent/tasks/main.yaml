@@ -1,0 +1,8 @@
+---
+- name: Append jenkins-agent user to the sudo group
+  ansible.builtin.user:
+    name: jenkins-agent
+    shell: /bin/bash
+    groups: sudo,docker
+    append: true
+    home: /home/jenkins-agent
