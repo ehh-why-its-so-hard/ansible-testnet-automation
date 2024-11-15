@@ -28,3 +28,7 @@ vega_caddy_server_api_lb_upstreams: []
 vega_caddy_server_with_block_explorer_lb: false
 vega_caddy_server_block_explorer_lb_domains: []
 vega_caddy_server_block_explorer_lb_upstreams: []
+
+# Space separated list of countries e.g: "PA PL UK US"
+vega_caddy_server_geoblocking_enabled: false
+vega_caddy_server_geoblocking_countries: "UK PA"
