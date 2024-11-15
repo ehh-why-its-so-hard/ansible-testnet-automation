@@ -10,6 +10,7 @@
         servers {
                 metrics
         }
+        order geo_ip first
 }
 
 (cors) {
@@ -29,6 +30,24 @@
         header @origin Vary Origin
 }
 
+(geoblocking) {
+  geo_ip {
+    reload_frequency 3h
+    db_path /etc/caddy/GeoLite2-Country.mmdb
+    trust_header X-Real-IP
+  }
 
+   @blockedCountries {
+     maxmind_geolocation {
+        db_path /etc/caddy/GeoLite2-Country.mmdb
+        # We have allow countries because We want to return static pages to the following countries
+        allow_countries {{ vega_caddy_server_geoblocking_countries }}
+     }
+  }
+
+   handle @blockedCountries {
+    respond "Sorry, page not available in this country \{geoip.country_code\} {http.request.remote.host} !!!" 401
+  }
+}
 
 import /etc/caddy/sites/*.caddy

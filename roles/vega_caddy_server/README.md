@@ -1,0 +1,1 @@
+# Vega Caddy Server ansible role

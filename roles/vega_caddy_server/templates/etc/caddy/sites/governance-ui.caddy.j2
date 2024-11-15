@@ -2,6 +2,10 @@
     root * /var/www/governance
     encode gzip
 
+    {% if vega_caddy_server_geoblocking_enabled|default(false) %}
+    import geoblocking
+    {% endif %}
+
     file_server {
         hide .git
         index index.html

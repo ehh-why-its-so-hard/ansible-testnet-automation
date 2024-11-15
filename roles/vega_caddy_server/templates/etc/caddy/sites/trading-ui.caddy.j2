@@ -2,6 +2,10 @@
     root * /var/www/trading
     encode gzip
 
+    {% if vega_caddy_server_geoblocking_enabled|default(false) %}
+    import geoblocking
+    {% endif %}
+
     file_server {
         hide .git
         index index.html
@@ -11,7 +15,6 @@
         root * /var/www/trading-view-bundle
         import cors *
     }
-
 
     handle_errors {
         rewrite * /index.html

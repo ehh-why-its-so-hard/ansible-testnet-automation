@@ -1,7 +1,5 @@
 ---
-vega_caddy_server_caddyfile_file_name: ""
-vega_caddy_server_node_home: "/home/vega"
-
+vega_caddy_server_enforce_rebuild: false
 vega_caddy_server_xcaddy_version: 0.4.2
 vega_caddy_server_caddy_version: v2.8.4
 
@@ -28,3 +26,9 @@ vega_caddy_server_api_lb_upstreams: []
 vega_caddy_server_with_block_explorer_lb: false
 vega_caddy_server_block_explorer_lb_domains: []
 vega_caddy_server_block_explorer_lb_upstreams: []
+
+# Space separated list of countries e.g: "PA PL GB US"
+# for more information see ISO-3166 alpha2 at
+#  http://www.geonames.org/countries/
+vega_caddy_server_geoblocking_enabled: false
+vega_caddy_server_geoblocking_countries: "GB PA"
