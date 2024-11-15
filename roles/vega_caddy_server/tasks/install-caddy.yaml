@@ -62,8 +62,9 @@
     xcaddy build {{ vega_caddy_server_caddy_version }} \
       --output /usr/bin/caddy \
       --with github.com/caddyserver/replace-response \
+      --with github.com/porech/caddy-maxmind-geolocation \
       --with github.com/shift72/caddy-geo-ip
-  when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
+  when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout or vega_caddy_server_enforce_rebuild)
   changed_when: (caddy_version.rc != 0) or (not vega_caddy_server_caddy_version in caddy_version.stdout)
   notify: "Restart caddy"
 
