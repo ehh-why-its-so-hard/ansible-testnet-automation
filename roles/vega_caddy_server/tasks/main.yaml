@@ -101,3 +101,12 @@
     mode: "0644"
   when: vega_caddy_server_with_block_explorer_lb and vega_caddy_server_block_explorer_lb_domains | length > 0
   notify: "Restart caddy"
+
+- name: Copy the Maxmind database
+  ansible.builtin.template:
+    src: "etc/caddy/GeoLite2-Country.mmdb"
+    dest: "/etc/caddy/GeoLite2-Country.mmdb"
+    owner: "caddy"
+    group: "caddy"
+    mode: "0644"
+  notify: "Restart caddy"
