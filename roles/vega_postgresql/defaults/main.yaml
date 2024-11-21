@@ -11,3 +11,4 @@ vega_postgresql_db_users:
 
 vega_postgresql_external_data_directory: "/home/vega/postgresql"
 vega_postgresql_allow_remote_access: false
+vega_postgresql_extra_postgresql_conf_params: {}
