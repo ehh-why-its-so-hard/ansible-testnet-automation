@@ -1,0 +1,71 @@
+---
+- name: Ensure metabase home ownership
+  ansible.builtin.file:
+    path: "/home/metabase"
+    state: directory
+    mode: "0755"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+  become: true
+
+- name: Create logs dir
+  ansible.builtin.file:
+    path: "/var/log/metabase"
+    state: directory
+    mode: "0755"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+  become: true
+
+
+- name: Create bin dir
+  ansible.builtin.file:
+    path: "/home/metabase/bin"
+    state: directory
+    mode: "0755"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+  become: true
+
+- name: Create bin dir
+  ansible.builtin.file:
+    path: "/home/metabase/workdir"
+    state: directory
+    mode: "0755"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+  become: true
+
+- name: Download metabase
+  ansible.builtin.get_url:
+    url: "https://downloads.metabase.com/{{- metabase_version -}}/metabase.jar"
+    dest: "/home/metabase/bin/metabase.jar"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+    mode: "0644"
+  become: true
+
+- name: Add logging config
+  ansible.builtin.template:
+    src: home/metabase/workdir/log4j.properties
+    dest: "/home/metabase/workdir/log4j.properties"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+    mode: "0644"
+  become: true
+
+- name: Add metabase service
+  ansible.builtin.template:
+    src: etc/systemd/system/metabase.service.j2
+    dest: /etc/systemd/system/metabase.service
+    mode: "0644"
+  become: true
+  notify:
+    - Reload systemd
+    - Restart metabase
+
+- name: Enable metabase service
+  ansible.builtin.service:
+    name: metabase
+    state: started
+    enabled: true

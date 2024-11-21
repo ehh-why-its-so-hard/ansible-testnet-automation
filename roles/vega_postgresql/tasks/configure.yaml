@@ -10,7 +10,6 @@
   args:
     creates: /.timescaledb-tune-finished
 
-
 - name: Configure | Custom configuration changes to postgresql.conf
   ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{- vega_postgresql_version -}}/main/postgresql.conf"
@@ -42,6 +41,15 @@
     internal_postgresql_home: "/var/lib/postgresql/{{- vega_postgresql_version -}}/main"
   register: psql_config
 
+
+- name: Configure | Extra postgresql.conf changes
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{- vega_postgresql_version -}}/main/postgresql.conf"
+    regexp: "^#?{{ item.key }} =.*"
+    line: "{{ item.key }} = {{ item.value }}"
+  with_dict: "{{ vega_postgresql_extra_postgresql_conf_params }}"
+  register: psql_config_extra
+
 - name: Configure | Check if data already migrated
   ansible.builtin.stat:
     path: "{{- vega_postgresql_external_data_directory -}}/main"
@@ -67,4 +75,4 @@
     state: restarted
     enabled: true
     name: postgresql
-  when: psql_config.changed or migrate_psql_home.changed
+  when: psql_config.changed or migrate_psql_home.changed or psql_config_extra.changed

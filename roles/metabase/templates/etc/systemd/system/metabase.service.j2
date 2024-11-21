@@ -1,0 +1,34 @@
+[Unit]
+Description=Metabase - Data visualization platform
+Documentation=https://www.metabase.com/docs/latest
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/java \
+    -Dlog4j.configuration=file:/home/metabase/workdir/log4j.properties \
+    {{ metabase_jvm_args }} -jar /home/metabase/bin/metabase.jar
+
+Type=simple
+User={{ metabase_system_user_name }}
+Group={{ metabase_system_group_name }}
+WorkingDirectory=/home/metabase/workdir
+
+SuccessExitStatus=143
+
+Restart=on-failure
+RestartSec=10
+
+Environment="MB_PASSWORD_COMPLEXITY=normal"
+Environment="MB_PASSWORD_LENGTH=10"
+Environment="MB_JETTY_HOST=0.0.0.0"
+Environment="MB_JETTY_PORT={{- metabase_ui_port -}}"
+
+Environment="MB_DB_DBNAME={{ metabase_db_name }}"
+Environment="MB_DB_TYPE={{ metabase_db_type }}"
+Environment="MB_DB_PORT={{ metabase_db_port }}"
+Environment="MB_DB_USER={{ metabase_db_user }}"
+Environment="MB_DB_PASS={{ metabase_db_pass }}"
+Environment="MB_DB_HOST={{ metabase_db_host }}"
+
+[Install]
+WantedBy=multi-user.target

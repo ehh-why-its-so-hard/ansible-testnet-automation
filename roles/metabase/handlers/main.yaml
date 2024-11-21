@@ -1,0 +1,13 @@
+---
+- name: Reload systemd
+  ansible.builtin.service:
+    daemon_reload: true
+  become: true
+  listen: "Reload systemd"
+
+- name: Restart metabase
+  ansible.builtin.service:
+    name: metabase
+    state: restarted
+  become: true
+  listen: "Restart metabase"

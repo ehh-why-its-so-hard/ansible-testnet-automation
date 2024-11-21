@@ -1,0 +1,29 @@
+---
+metabase_version: "v0.51.4"
+
+metabase_system_group_name: metabase
+metabase_system_user_name: metabase
+metabase_ssh_private_key_content: ""
+
+# Example
+# metabase_secure_tunnels:
+#  - remote_user: metabase
+#    remote_host: remote-data-node.vega.xyz
+#    remote_port: 5432
+#    local_port: 54321
+#    service_name: mainnet
+metabase_secure_tunnels: []
+
+metabase_site_name: "Metabase"
+metabase_ui_user_email: "metabase@example.com"
+metabase_ui_user_password: "example-password"
+metabase_ui_port: 3000
+
+metabase_jvm_args: "-Djava.net.preferIPv4Stack=True"
+
+metabase_db_name: "metabase"
+metabase_db_type: "postgres"
+metabase_db_port: 5432
+metabase_db_user: "metabase"
+metabase_db_pass: "some-password"
+metabase_db_host: "127.0.0.1"

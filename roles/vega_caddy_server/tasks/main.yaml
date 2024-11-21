@@ -109,8 +109,6 @@
     owner: "caddy"
     group: "caddy"
     mode: "0644"
+    force: false
   notify: "Restart caddy"
   diff: false
-  args:
-    # database is managed by external process, do not overwrite it with default one
-    creates: "/etc/caddy/GeoLite2-Country.mmdb"

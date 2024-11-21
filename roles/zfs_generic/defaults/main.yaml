@@ -1,0 +1,11 @@
+---
+zfs_generic_pool_name: "zfs_pool"
+zfs_generic_device: "sda"
+
+# Example:
+# zfs_generic_datasets:
+#  - dataset_name: "zfs_pool/home"
+#    mount_point: "/mnt/zfs_pool"
+#  - dataset_name: "zfs_pool/home/postgresql"
+#    mount_point: "/mnt/zfs_pool/postgresql"
+zfs_generic_datasets: []
