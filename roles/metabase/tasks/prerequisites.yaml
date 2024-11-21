@@ -20,7 +20,7 @@
 
 - name: Copy private SSH key for metabase user
   ansible.builtin.copy:
-    content: "{{- metabase_ssh_private_key_content -}}"
+    content: "{{ metabase_ssh_private_key_content }}\n"
     dest: "/home/{{- metabase_system_user_name -}}/.ssh/id_rsa"
     owner: "{{- metabase_system_user_name -}}"
     group: "{{- metabase_system_group_name -}}"

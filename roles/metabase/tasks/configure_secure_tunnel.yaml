@@ -2,7 +2,7 @@
 - name: Add tunnel env
   ansible.builtin.template:
     src: etc/default/secure-tunnel.env.j2
-    dest: /etc/default/secure-tunnel@{{ item.tunnel_service_name }}
+    dest: /etc/default/secure-tunnel@{{ item.service_name }}
     mode: "0755"
   become: true
   vars:
@@ -11,10 +11,12 @@
     tunnel_remote_port: '{{ item.remote_port }}'
     tunnel_local_port: '{{ item.local_port }}'
     tunnel_service_name: '{{ item.service_name }}'
+  register: secure_tunnel_config
 
-- name: Enable secure-tunnel service
+- name: Enable secure-tunnel service # noqa: no-handler
   ansible.builtin.service:
     name: "secure-tunnel@{{- item.service_name -}}"
     daemon_reload: true
     state: restarted
     enabled: true
+  when: secure_tunnel_config.changed

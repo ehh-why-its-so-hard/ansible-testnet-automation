@@ -1,4 +1,13 @@
 ---
+- name: Ensure metabase home ownership
+  ansible.builtin.file:
+    path: "/home/metabase"
+    state: directory
+    mode: "0755"
+    owner: "{{ metabase_system_user_name }}"
+    group: "{{ metabase_system_group_name }}"
+  become: true
+
 - name: Create logs dir
   ansible.builtin.file:
     path: "/var/log/metabase"
@@ -7,6 +16,7 @@
     owner: "{{ metabase_system_user_name }}"
     group: "{{ metabase_system_group_name }}"
   become: true
+
 
 - name: Create bin dir
   ansible.builtin.file:
