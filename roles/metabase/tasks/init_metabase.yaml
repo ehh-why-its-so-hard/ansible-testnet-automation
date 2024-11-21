@@ -1,0 +1,30 @@
+---
+- name: Ensure metabase has started (this can take a while...)
+  ansible.builtin.uri:
+    url: "http://localhost:{{ metabase_ui_port }}/api/session/properties"
+    status_code: 200
+  register: metabase_api_session
+  until: metabase_api_session is not failed
+  retries: 10
+  delay: 6
+
+- name: Submit initial configuration
+  ansible.builtin.uri:
+    url: "http://localhost:{{ metabase_ui_port }}/api/setup"
+    method: POST
+    body:
+      token: "{{ metabase_api_session.json['setup-token'] }}"
+      user:
+        name: "{{ metabase_ui_user_email }}"
+        email: "{{ metabase_ui_user_email }}"
+        password: "{{ metabase_ui_user_password }}"
+      prefs:
+        site_name: "{{ metabase_site_name }}"
+        allow_tracking: false
+    body_format: json
+    status_code: 200
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+  register: metabase_api_setup
+  when: metabase_api_session.json["setup-token"]

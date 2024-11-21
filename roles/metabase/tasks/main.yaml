@@ -1,0 +1,13 @@
+---
+- name: Setup prerequisites
+  ansible.builtin.include_tasks: prerequisites.yaml
+
+- name: Configure ssh tunnels
+  ansible.builtin.include_tasks: configure_secure_tunnel.yaml
+  loop: '{{ metabase_secure_tunnels }}'
+
+- name: Install metabase
+  ansible.builtin.include_tasks: install_metabase.yaml
+
+- name: Install metabase
+  ansible.builtin.include_tasks: init_metabase.yaml

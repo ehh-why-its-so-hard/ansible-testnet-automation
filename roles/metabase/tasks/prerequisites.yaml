@@ -1,0 +1,37 @@
+---
+- name: Create metabase group
+  ansible.builtin.group:
+    name: "{{- metabase_system_group_name -}}"
+  become: true
+
+- name: Create the metabase user
+  ansible.builtin.user:
+    name: "{{- metabase_system_user_name -}}"
+    group: "{{- metabase_system_group_name -}}"
+  become: true
+
+- name: Create .ssh directory for the metabase user
+  ansible.builtin.file:
+    path: "/home/{{- metabase_system_user_name -}}/.ssh"
+    state: directory
+    owner: "{{- metabase_system_user_name -}}"
+    group: "{{- metabase_system_group_name -}}"
+    mode: "0755"
+
+- name: Copy private SSH key for metabase user
+  ansible.builtin.copy:
+    content: "{{- metabase_ssh_private_key_content -}}"
+    dest: "/home/{{- metabase_system_user_name -}}/.ssh/id_rsa"
+    owner: "{{- metabase_system_user_name -}}"
+    group: "{{- metabase_system_group_name -}}"
+    mode: "0600"
+
+
+- name: Install tunnel service
+  ansible.builtin.template:
+    src: etc/systemd/system/secure-tunnel.service.j2
+    dest: /etc/systemd/system/secure-tunnel@.service
+    mode: "0750"
+  become: true
+  notify:
+    - Reload systemd
