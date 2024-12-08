@@ -1,0 +1,8 @@
+---
+- name: Restart logrotate
+  ansible.builtin.service:
+    state: restarted
+    daemon_reload: true
+    enabled: true
+    name: logrotate
+  listen: "Restart logrotate"
