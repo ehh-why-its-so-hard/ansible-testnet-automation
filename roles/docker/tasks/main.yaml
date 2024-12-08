@@ -40,9 +40,11 @@
   delay: 3
   register: docker_apt_result
   until: docker_apt_result is succeeded
+  when: not ansible_check_mode
 
 - name: Restart docker
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: true
     name: docker
+  when: not ansible_check_mode
