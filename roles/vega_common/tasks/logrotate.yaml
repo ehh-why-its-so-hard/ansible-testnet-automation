@@ -1,0 +1,31 @@
+---
+- name: Install logrotate
+  ansible.builtin.apt:
+    pkg:
+      - logrotate
+  retries: 3
+  delay: 3
+  register: logrotate_install
+  until: logrotate_install is succeeded
+
+- name: Copy logrotate scripts
+  ansible.builtin.copy:
+    src: "{{- item -}}"
+    dest: "/{{- item -}}"
+    owner: root
+    group: root
+    mode: '0755'
+  notify: "Restart logrotate"
+  with_items:
+    - usr/lib/rsyslog/rsyslog-rotate
+
+- name: Copy log rotate configs
+  ansible.builtin.copy:
+    src: "{{- item -}}"
+    dest: "/{{- item -}}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: "Restart logrotate"
+  with_items:
+    - etc/logrotate.d/rsyslog

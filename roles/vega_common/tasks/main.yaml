@@ -56,6 +56,9 @@
 - name: Install dasel
   ansible.builtin.import_tasks: dasel.yaml
 
+- name: Install logrotate
+  ansible.builtin.import_tasks: logrotate.yaml
+
 - name: Set a hostname
   ansible.builtin.hostname:
     name: "{{- vega_common_custom_hostname -}}"
