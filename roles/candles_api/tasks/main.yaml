@@ -13,29 +13,37 @@
     groups: sudo,candles-api
     append: true
 
-- name: Download candles-api binary
-  ansible.builtin.get_url:
-    force: true
-    url: "https://github.com/{{- candles_api_binary_repository -}}/releases/download/{{- candles_api_binary_version -}}/candles-api-linux-amd64.zip"
-    dest: &bin_dest /tmp/candles_api.zip
-    mode: '0600'
+- name: Check if candles-api already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/candles-api
+  register: candles_api_installed
 
-- name: Unpack candles-api
-  ansible.builtin.unarchive:
-    src: *bin_dest
-    remote_src: true
-    dest: /tmp
-  when: not ansible_check_mode
+- name: Install candles-api
+  when: not candles_api_external_release_enabled or not candles_api_installed.stat.exists
+  block:
+    - name: Download candles-api binary
+      ansible.builtin.get_url:
+        force: true
+        url: "https://github.com/{{- candles_api_binary_repository -}}/releases/download/{{- candles_api_binary_version -}}/candles-api-linux-amd64.zip"
+        dest: &bin_dest /tmp/candles_api.zip
+        mode: '0600'
 
-- name: Copy candles-api binary
-  ansible.builtin.copy:
-    remote_src: true
-    src: "/tmp/candles-api-linux-amd64"
-    dest: /usr/local/bin/candles-api
-    owner: root
-    group: root
-    mode: '0755'
-  when: not ansible_check_mode
+    - name: Unpack candles-api
+      ansible.builtin.unarchive:
+        src: *bin_dest
+        remote_src: true
+        dest: /tmp
+      when: not ansible_check_mode
+
+    - name: Copy candles-api binary
+      ansible.builtin.copy:
+        remote_src: true
+        src: "/tmp/candles-api-linux-amd64"
+        dest: /usr/local/bin/candles-api
+        owner: root
+        group: root
+        mode: '0755'
+      when: not ansible_check_mode
 
 - name: Install candles-api systemd files
   ansible.builtin.template:

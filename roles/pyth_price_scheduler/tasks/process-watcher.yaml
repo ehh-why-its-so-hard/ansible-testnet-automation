@@ -10,6 +10,7 @@
     src: *watcherdist
     remote_src: true
     dest: /tmp
+  when: not ansible_check_mode
 
 - name: Copy the binary
   ansible.builtin.copy:
@@ -19,6 +20,7 @@
     owner: root
     group: root
     mode: '0755'
+  when: not ansible_check_mode
 
 - name: Copy process watcher config
   ansible.builtin.template:
@@ -27,6 +29,7 @@
     owner: root
     group: root
     mode: '0644'
+  when: not ansible_check_mode
 
 - name: Copy process watcher service file
   ansible.builtin.template:
@@ -35,6 +38,7 @@
     owner: root
     group: root
     mode: '0644'
+  when: not ansible_check_mode
 
 - name: Start pusher watcher service
   ansible.builtin.service:
@@ -42,3 +46,4 @@
     state: restarted
     enabled: true
     daemon_reload: true
+  when: not ansible_check_mode

@@ -6,3 +6,4 @@ candles_api_polygonio_api_key: ""
 candles_api_with_caddy_config: false
 candles_api_caddy_config_destination: /etc/caddy/sites/candles-api.caddy
 candles_api_domains: []
+candles_api_external_release_enabled: true
