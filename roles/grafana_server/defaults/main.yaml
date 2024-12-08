@@ -5,6 +5,7 @@ grafana_server_install: true
 grafana_server_data_dir: /var/lib/grafana
 grafana_server_install_nginx_config: false
 grafana_server_external_domain: grafana.local.mainnet.community
+grafana_server_external_proto: https
 grafana_server_enabled_plugins:
   - grafana-sentry-datasource
 
