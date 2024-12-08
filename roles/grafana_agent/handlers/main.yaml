@@ -3,6 +3,7 @@
   ansible.builtin.service:
     name: grafana-agent
     state: restarted
+    daemon_reload: true
     enabled: true
   listen: Restart grafana-agent
   when: not ansible_check_mode
