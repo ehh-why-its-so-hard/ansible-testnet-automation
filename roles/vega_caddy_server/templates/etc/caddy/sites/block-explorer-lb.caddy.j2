@@ -1,4 +1,7 @@
 {{- vega_caddy_server_block_explorer_lb_domains | map('ansible.builtin.regex_replace', '$', ':443') | join(', ') }} {
+    import default_access_logs
+    import default_headers
+
     reverse_proxy {
 {% for upstream in vega_caddy_server_block_explorer_lb_upstreams %}
         to {{ upstream }}

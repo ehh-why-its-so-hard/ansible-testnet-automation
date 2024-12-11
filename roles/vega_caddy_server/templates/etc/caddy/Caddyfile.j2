@@ -2,6 +2,18 @@
         header X-Vega-Node-Id "{{- vega_caddy_server_node_id  if vega_caddy_server_node_id | length > 0 else inventory_hostname -}}"
 }
 
+(default_access_logs) {
+        log {
+                output stderr
+                format json
+        }
+}
+
+(default_headers) {
+        header ?X-Forwarded-For {client_ip}
+}
+
+
 {
         # acme_ca https://acme.zerossl.com/v2/DV90
         # email todo...
